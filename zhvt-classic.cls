@@ -9,13 +9,13 @@
 % 微信：w1280543
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{zhvt}
+\ProvidesClass{zhvt-classic}
 \ProcessOptions\relax
 \LoadClass[oneside]{book}   % 启用 oneside 选项，避免实际左右间距的自动调整
 \RequirePackage{expl3}
 \RequirePackage{xparse}
 \RequirePackage{etoolbox}
-\RequirePackage{xeCJK}
+\RequirePackage[LoadFandol=false]{xeCJK}
 \RequirePackage{zhnumber}
 \RequirePackage{geometry}
 \RequirePackage{atbegshi}   % 用于实现页面旋转、框线、界栏、鱼尾等版式部件
@@ -133,6 +133,7 @@
         }
     }
 }
+
 
 % 实现 oneside 选项下的 \cleardoublepage
 \RenewDocumentCommand{\cleardoublepage}{}{%
@@ -501,4 +502,3 @@
         \zhvt@setlayout
     }
 }
-
