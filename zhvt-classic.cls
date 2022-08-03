@@ -264,15 +264,17 @@
 }
 
 % 書名葉
-\RenewDocumentCommand{\maketitle}{ommm}{%
+\RenewDocumentCommand{\maketitle}{ommo}{%
     \IfNoValueTF{#1}
-        {\cs_new:Nn \__zhvt_title_size: {\fontsize{3\l_zhvt_font_size_dim}{0pt}}}
-        {\cs_new:Nn \__zhvt_title_size: {\fontsize{#1\l_zhvt_font_size_dim}{0pt}}}
+        {\cs_new:Nn \__zhvt_title_size: {\fontsize{3\l_zhvt_font_size_dim}{0pt}\selectfont}}
+        {\cs_new:Nn \__zhvt_title_size: {\fontsize{#1\l_zhvt_font_size_dim}{0pt}\selectfont}}
     \titlematter
     \begin{picture}(\textwidth,\textheight)
         \put(0,\textheight-\baselineskip){\symbol{"3000}\parbox{\dimexpr\textwidth-\l_zhvt_font_size_dim}{#2}}
-        \put(0,0.5\textheight){\parbox[t]{\textwidth}{\__zhvt_title_size:\hfil #3}}
-        \put(0,\baselineskip){\parbox{\dimexpr\textwidth-\l_zhvt_font_size_dim}{\hfill #4}\symbol{"3000}}
+        \put(0,0.5\textheight){\parbox[t]{\textwidth}{%
+            \__zhvt_title_size:\hfil\IfNoValueTF{#4}{\@title}{#4}}
+        }
+        \put(0,\baselineskip){\parbox{\dimexpr\textwidth-\l_zhvt_font_size_dim}{\hfill #3}\symbol{"3000}}
     \end{picture}
     \cleardoublepage
 }
