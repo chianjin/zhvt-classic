@@ -49,9 +49,9 @@
     baselineskip_ratio  = 1.5,
     % 夹注字体
     jiazhu_font         = Source Han Serif SC SemiBold,
-    % 页面宽度
+    % 页面宽度，大32开
     paper_width         = 140mm,
-    % 页面高度
+    % 页面高度，大32开
     paper_height        = 203mm,
     % 每页行数
     page_lines          = 10,
