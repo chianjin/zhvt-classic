@@ -86,10 +86,10 @@
 
 以上代码实际还是以横排、奇偶页方式实现的，所以输出的 PDF 也是以奇偶页方式分页的。与线装书的一叶（葉）概念不同。最终输出需要进行拼版。
 
-```python
+```shell
 # need pymupdf package, can be installed by pip
 # pip install pymupdf
-> python tools/splice-page.py <path/some.pdf>
+python tools/splice-page.py <path/some.pdf>
 ```
 
 ## 版权说明
@@ -101,7 +101,5 @@
 2. 除此上述用途之外，请于本人联系获得授权。
 
 3. 本模板所引用宏包版权归开发者所有，如需授权请自行联系。
-
-
 
 VX: w1280543
