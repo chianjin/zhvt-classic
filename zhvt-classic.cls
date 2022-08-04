@@ -347,6 +347,12 @@
     %% 用于页面盒子构建完成后，修正 \topskip 的误差
     \skip_const:Nn \c__zhvt_fix_top_skip
       { \l_zhvt_baseline_skip_dim / 2 - \topskip }
+    \dim_const:Nn \c__zhvt_shipout_ht_dim
+      {
+          \l_zhvt_text_width_dim * 2
+        + \l_zhvt_baseline_skip_dim
+        + \c__zhvt_fix_top_skip
+      }
     % 页面尺寸设置
     \dim_set_eq:NN \textwidth  \l_zhvt_text_height_dim
     \dim_set_eq:NN \textheight \l_zhvt_text_width_dim
@@ -421,7 +427,7 @@
   }
 \tl_new:N \g__zhvt_chapter_mark_tl
 \box_new:N \g__zhvt_last_shipout_box
-%% 偶数页完成拼版输出，加入书口、框线、界栏、鱼尾等版式部件
+%% 偶数页完成拼版输出
 \cs_new_protected:Npn \__zhvt_build_shipout_box:
   {
     \vbox_gset:Nn \g__zhvt_last_shipout_box
@@ -430,34 +436,33 @@
         \int_while_do:nNnn \tex_lastnodetype:D = { 11 }
           { \tex_unskip:D }
       }
-    \vbox_gset:Nn \g__zhvt_last_shipout_box
+    \vbox_set_to_ht:Nnn \l_shipout_box
+      { \c__zhvt_shipout_ht_dim }
       {
-        \__zhvt_put_frame_box:
-        \nointerlineskip
         \skip_vertical:N \c__zhvt_fix_top_skip
-        \vbox_to_ht:nn
-          { \l_zhvt_text_width_dim + \topskip }
-          {
-            \box_use_drop:N \g__zhvt_last_shipout_box
-            \vss
-            \__zhvt_put_center_box:
-          }
+        \box_use_drop:N \g__zhvt_last_shipout_box
+        \vss
+        \__zhvt_put_center_box:
         \__zhvt_fix_baseline_skip:
         \box_use_drop:N \l_shipout_box
       }
-    %% 更新版心盒子大小与外框线大小相同
+    %% 加入书口、框线、界栏、鱼尾等版式部件，更新版心盒子大小与外框线大小相同
     \hbox_gset:Nn \g__zhvt_last_shipout_box
       {
         \box_move_up:nn
-          { \g__zhvt_frame_dp_dim - \box_ht:N \g__zhvt_last_shipout_box }
+          { \g__zhvt_yshift_dim }
           {
-            \hbox_to_wd:nn
-              { \g__zhvt_frame_wd_dim }
-              { \hss \box_use_drop:N \g__zhvt_last_shipout_box \hss }
+            \vbox:n
+              {
+                \__zhvt_put_frame_box:
+                \nointerlineskip
+                \box_move_right:nn
+                  { \g__zhvt_xshift_dim }
+                  { \box_use_drop:N \l_shipout_box }
+              }
           }
       }
-    \box_gset_ht:Nn \g__zhvt_last_shipout_box
-      { \g__zhvt_frame_ht_dim + \g__zhvt_frame_dp_dim }
+    \box_gset_ht:Nn \g__zhvt_last_shipout_box { \g__zhvt_total_ht_dim }
     \box_set_eq_drop:NN \l_shipout_box \g__zhvt_last_shipout_box
   }
 %% 加入书口
@@ -601,20 +606,6 @@
         \draw_end:
       }
     \__zhvt_offset:N #1
-    \hbox_gset:Nn #1
-      {
-        \vbox:n
-          {
-            \box_move_left:nn
-              {
-                + \l_zhvt_frame_sep_dim
-                + \l_zhvt_line_sep_dim / 2
-                + \l_zhvt_frame_line_width_dim / 2
-              }
-              { \box_use_drop:N #1 }
-          }
-      }
-    \box_gset_wd:Nn #1 { \c_zero_dim }
     \box_gset_ht:Nn #1 { \c_zero_dim }
     \box_gset_dp:Nn #1 { \c_zero_dim }
   }
@@ -628,27 +619,25 @@
 %% 设置版心的偏移量，水平方向居中，竖直方向按天头、地脚高度比例设置
 \cs_new_protected:Npn \__zhvt_offset:N #1
   {
-    \dim_gset:Nn \g__zhvt_frame_wd_dim { \box_wd:N #1 }
-    \dim_gset:Nn \g__zhvt_frame_ht_dim { \box_ht:N #1 }
-    \dim_gset:Nn \g__zhvt_frame_dp_dim { \box_dp:N #1 }
+    \dim_gset:Nn \g__zhvt_total_ht_dim { \box_ht_plus_dp:N # 1 }
     \dim_gset:Nn \hoffset
       {
         \fp_to_dim:n
           {
-            \dim_to_fp:n { \paperwidth - \g__zhvt_frame_wd_dim }
+            \dim_to_fp:n { \paperwidth - \box_wd:N #1 }
               * \l_zhvt_top_bottom_ratio_fp
               / ( \l_zhvt_top_bottom_ratio_fp + 1 )
           }
       }
     \dim_gset:Nn \voffset
-      {
-        (   \paperheight
-          - \g__zhvt_frame_ht_dim
-          - \g__zhvt_frame_dp_dim ) / 2
-      }
+      { ( \paperheight - \g__zhvt_total_ht_dim ) / 2 }
     \dim_gsub:Nn \hoffset { 1in }
     \dim_gsub:Nn \voffset { 1in }
+    \dim_gset:Nn \g__zhvt_xshift_dim
+      { ( \box_wd:N #1 - \box_wd:N \l_shipout_box ) / 2 }
+    \dim_gset:Nn \g__zhvt_yshift_dim
+      { \box_dp:N #1 - \box_ht:N \l_shipout_box }
   }
-\dim_new:N \g__zhvt_frame_wd_dim
-\dim_new:N \g__zhvt_frame_ht_dim
-\dim_new:N \g__zhvt_frame_dp_dim
+\dim_new:N \g__zhvt_total_ht_dim
+\dim_new:N \g__zhvt_xshift_dim
+\dim_new:N \g__zhvt_yshift_dim
