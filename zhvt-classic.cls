@@ -486,9 +486,25 @@
     \selectfont
 }
 
-\AtEndDocument{\cleardoublepage}
-
 \ExplSyntaxOff
+
+\newlength{\zhvt@noteboxwidth}
+\NewDocumentCommand{\note}{m}{%
+    \settowidth{\zhvt@noteboxwidth}{#1}%
+    \raisebox{-0.5em}{%
+        \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+            \draw[
+                fill=black,
+                rounded corners=0.1em,
+                line width=0pt
+              ]
+                (0,0) rectangle (\zhvt@noteboxwidth,1em);
+            \node[color=white,right] at (0, 0.88em) {#1};
+        \end{tikzpicture}%
+    }%
+}
+
+\AtEndDocument{\cleardoublepage}
 
 % 輸出頁面
 \AtBeginShipout{%
