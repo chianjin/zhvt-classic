@@ -71,13 +71,13 @@
 
 \keys_define:nn {zhvt} {
     main_font           .str_set:N = \l_zhvt_main_font_str,
-    main_font           .initial:n = Source~Han~Serif~SC~SemiBold,
+    main_font           .initial:n = Source~Han~Serif~SemiBold,
     font_size           .dim_set:N = \l_zhvt_font_size_dim,
     font_size           .initial:n = 20pt,
     baselineskip_ratio   .fp_set:N = \l_zhvt_baseline_skip_ratio_fp,
     baselineskip_ratio  .initial:n = 1.5,
     jiazhu_font         .str_set:N = \l_zhvt_jiazhu_font_str,
-    jiazhu_font         .initial:n = Source~Han~Serif~SC~SemiBold,
+    jiazhu_font         .initial:n = Source~Han~Serif~SemiBold,
     paper_width         .dim_set:N = \l_zhvt_paper_width_dim,
     paper_width         .initial:n = 140mm,
     paper_height        .dim_set:N = \l_zhvt_paper_height_dim,
