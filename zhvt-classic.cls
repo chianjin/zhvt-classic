@@ -11,6 +11,7 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{zhvt-classic}
 \ProcessOptions\relax
+\RequirePackage{fix-cm}
 \LoadClass[oneside]{book}   % 启用 oneside 选项，避免实际左右间距的自动调整
 \RequirePackage{xparse}
 \RequirePackage[LoadFandol=false]{xeCJK}
@@ -359,11 +360,10 @@
     % 自动拼版后的纸张大小，并将所有页面顺时针旋转 90 度
     \dim_set_eq:NN \paperwidth \l_zhvt_paper_height_dim
     \dim_set:Nn \paperheight { \l_zhvt_paper_width_dim * 2 }
+    \dim_set_eq:NN \pdfpagewidth  \paperwidth
+    \dim_set_eq:NN \pdfpageheight \paperheight
     \hook_gput_code:nnn { shipout/firstpage } { zhvt }
-      {
-        \special { papersize = \dim_use:N \paperwidth , \dim_use:N \paperheight }
-        \special { pdf: ~ put ~ @pages <</Rotate ~ 90>> }
-      }
+      { \special { pdf: ~ put ~ @pages <</Rotate ~ 90>> } }
     % 设置字体
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l_zhvt_main_font_str }
@@ -430,12 +430,6 @@
 %% 偶数页完成拼版输出
 \cs_new_protected:Npn \__zhvt_build_shipout_box:
   {
-    \vbox_gset:Nn \g__zhvt_last_shipout_box
-      {
-        \vbox_unpack_drop:N \g__zhvt_last_shipout_box
-        \int_while_do:nNnn \tex_lastnodetype:D = { 11 }
-          { \tex_unskip:D }
-      }
     \vbox_set_to_ht:Nnn \l_shipout_box
       { \c__zhvt_shipout_ht_dim }
       {
@@ -447,27 +441,27 @@
         \box_use_drop:N \l_shipout_box
       }
     %% 加入书口、框线、界栏、鱼尾等版式部件，更新版心盒子大小与外框线大小相同
+    \vbox_gset:Nn \g__zhvt_last_shipout_box
+      {
+        \__zhvt_put_frame_box:
+        \box_move_right:nn
+          { \g__zhvt_xshift_dim }
+          { \box_use_drop:N \l_shipout_box }
+      }
     \hbox_gset:Nn \g__zhvt_last_shipout_box
       {
         \box_move_up:nn
           { \g__zhvt_yshift_dim }
-          {
-            \vbox:n
-              {
-                \__zhvt_put_frame_box:
-                \nointerlineskip
-                \box_move_right:nn
-                  { \g__zhvt_xshift_dim }
-                  { \box_use_drop:N \l_shipout_box }
-              }
-          }
+          { \box_use_drop:N \g__zhvt_last_shipout_box }
       }
     \box_gset_ht:Nn \g__zhvt_last_shipout_box { \g__zhvt_total_ht_dim }
+    \box_gset_wd:Nn \g__zhvt_last_shipout_box { \g__zhvt_total_wd_dim }
     \box_set_eq_drop:NN \l_shipout_box \g__zhvt_last_shipout_box
   }
 %% 加入书口
 \cs_new_protected:Npn \__zhvt_put_center_box:
   {
+    \nointerlineskip
     \hbox:n
       {
         \tl_if_empty:NTF \g__zhvt_chapter_mark_tl
@@ -506,6 +500,7 @@
   {
     \box_if_exist:NF #1 { \__zhvt_build_frame_box:N #1 }
     \box_use:N #1
+    \nointerlineskip
   }
 %% 实际的作图环境
 \cs_new_protected:Npn \__zhvt_build_frame_box:N #1
@@ -514,7 +509,8 @@
     \hbox_gset:Nn #1
       {
         \draw_begin:
-          \exp_args:No \color_select:n { \l_zhvt_grid_color_str }
+          \exp_args:Ne \color_fill:n { \l_zhvt_grid_color_str }
+          \exp_args:Ne \color_stroke:n { \l_zhvt_grid_color_str }
           \draw_linewidth:n { \l_zhvt_grid_line_width_dim }
           \dim_add:Nn \l_zhvt_text_height_dim { \l_zhvt_line_sep_dim }
           %% 鱼尾
@@ -606,8 +602,7 @@
         \draw_end:
       }
     \__zhvt_offset:N #1
-    \box_gset_ht:Nn #1 { \c_zero_dim }
-    \box_gset_dp:Nn #1 { \c_zero_dim }
+    \__zhvt_pdfsavebox:N #1
   }
 \cs_new_protected:Npn \__zhvt_draw_grid_lines:n #1
   {
@@ -619,25 +614,54 @@
 %% 设置版心的偏移量，水平方向居中，竖直方向按天头、地脚高度比例设置
 \cs_new_protected:Npn \__zhvt_offset:N #1
   {
-    \dim_gset:Nn \g__zhvt_total_ht_dim { \box_ht_plus_dp:N # 1 }
+    \dim_gset:Nn \g__zhvt_total_wd_dim { \box_wd:N #1 }
+    \dim_gset:Nn \g__zhvt_total_ht_dim { \box_ht_plus_dp:N #1 }
     \dim_gset:Nn \hoffset
       {
         \fp_to_dim:n
           {
-            \dim_to_fp:n { \paperwidth - \box_wd:N #1 }
+            \dim_to_fp:n { \paperwidth - \g__zhvt_total_wd_dim }
               * \l_zhvt_top_bottom_ratio_fp
               / ( \l_zhvt_top_bottom_ratio_fp + 1 )
           }
       }
     \dim_gset:Nn \voffset
       { ( \paperheight - \g__zhvt_total_ht_dim ) / 2 }
-    \dim_gsub:Nn \hoffset { 1in }
-    \dim_gsub:Nn \voffset { 1in }
+    \dim_gsub:Nn \hoffset { 72.27pt }
+    \dim_gsub:Nn \voffset { 72.27pt }
     \dim_gset:Nn \g__zhvt_xshift_dim
       { ( \box_wd:N #1 - \box_wd:N \l_shipout_box ) / 2 }
     \dim_gset:Nn \g__zhvt_yshift_dim
       { \box_dp:N #1 - \box_ht:N \l_shipout_box }
   }
 \dim_new:N \g__zhvt_total_ht_dim
+\dim_new:N \g__zhvt_total_wd_dim
 \dim_new:N \g__zhvt_xshift_dim
 \dim_new:N \g__zhvt_yshift_dim
+
+\cs_new_protected:Npn \__zhvt_pdfsavebox:N #1
+  {
+    \exp_args:NNe \__zhvt_pdfsavebox_aux:Nn
+      #1 { @zhvt@obj@ \int_value:w #1 }
+  }
+\cs_new_protected:Npn \__zhvt_pdfsavebox_aux:Nn #1#2
+  {
+    \hbox_gset:Nn #1
+      {
+        \tex_special:D
+          {
+            pdf: bxobj ~ #2 ~
+              width  ~ \dim_eval:n { \box_wd:N #1 } ~
+              height ~ \dim_eval:n { \box_ht:N #1 } ~
+              depth  ~ \dim_eval:n { \box_dp:N #1 }
+          }
+        \box_use_drop:N #1
+        \tex_special:D { pdf: exobj }
+      }
+    \box_gset_wd:Nn #1 { \c_zero_dim }
+    \box_gset_ht:Nn #1 { \c_zero_dim }
+    \box_gset_dp:Nn #1 { \c_zero_dim }
+    \box_use_drop:N #1
+    \nointerlineskip
+    \hbox_gset:Nn #1 { \tex_special:D { pdf: uxobj ~ #2 } }
+  }
