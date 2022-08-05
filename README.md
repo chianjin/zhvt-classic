@@ -32,7 +32,7 @@
 大學之道在明明德在親民在止於至善
 \jz{程子曰親當作新...} % 夹注
 
-\begin{document}
+\end{document}
 ```
 
 ## 参数设置
@@ -42,13 +42,13 @@
 ```tex
 \zhvtset {
     % 字体
-    main_font           = Source Han Serif SC SemiBold,
+    main_font           = Source Han Serif SemiBold,
     % 字体尺寸
     font_size           = 20pt,
     % 行距与字体尺寸的倍数
     baselineskip_ratio  = 1.5,
     % 夹注字体
-    jiazhu_font         = Source Han Serif SC SemiBold,
+    jiazhu_font         = Source Han Serif SemiBold,
     % 页面宽度，大32开
     paper_width         = 140mm,
     % 页面高度，大32开
@@ -96,10 +96,11 @@ python tools/splice-page.py <path/some.pdf>
 
 本模板
 
-1. 个人免费使用，但仅限于学习、研究，非营利性分发采用本模板生成的最终作品。
+1. 个人免费使用，但仅限于学习、研究、非经营性分发采用本模板生成的最终作品。
 
 2. 除此上述用途之外，请于本人联系获得授权。
 
 3. 本模板所引用宏包版权归开发者所有，如需授权请自行联系。
 
+Mail: chianjin@foxmail.com
 VX: w1280543

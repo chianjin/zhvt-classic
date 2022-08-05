@@ -1,13 +1,15 @@
 % LaTeX 中文綫裝書模板
 %
 % 本模板：
-% 1. 個人免費使用，但僅限於：學習、研究、非贏利性分發採用本模板
+% 1. 個人免費使用，但僅限於：學習、研究、非經營性分發採用本模板
 %    生成的最終作品。
 % 2. 除此上述用途之外，請與本人聯係獲取授權。
 % 3. 本模板所引用宏包版權歸開發者所有，如需授權請自行聯繫。
 %
-% 電子郵件： chianjin@foxmail.com
+% 郵件： chianjin@foxmail.com
 % 微信：w1280543
+%
+% 項目地址：https://github.com/chianjin/zhvt-classic
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{zhvt-classic}
