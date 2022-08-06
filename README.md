@@ -11,7 +11,7 @@
 \begin{document}
 
 % 书名页
-\maketitle{宋新安朱文公章句並注}{大~學~章~句}{壬寅夏潤州宜軒製版}
+\maketitle{宋新安朱文公章句並注}{壬寅夏潤州宜軒製版}[大~學~章~句]
 
 % 目录页
 \setcounter{page}{1}
