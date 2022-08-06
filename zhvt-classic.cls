@@ -7,6 +7,11 @@
 %
 % 电子邮件： chianjin@foxmail.com
 % 微信：w1280543
+%
+% 特别感谢 Qing Lee (https://github.com/qinglee, https://www.zhihu.com/people/qinglee)
+% 开发的夹注宏包，使得本模板基本上实现了传统线装书的排版要求，
+% 用 l3draw 模块重写了所有版心、框线、鱼尾、界栏等版式部件，
+% 以及其他细节之处的修正。
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{zhvt-classic}
@@ -67,13 +72,13 @@
 
 \keys_define:nn {zhvt} {
     main_font           .str_set:N = \l_zhvt_main_font_str,
-    main_font           .initial:n = Source~Han~Serif~SC~SemiBold,
+    main_font           .initial:n = Source~Han~Serif~SemiBold,
     font_size           .dim_set:N = \l_zhvt_font_size_dim,
     font_size           .initial:n = 20pt,
     baselineskip_ratio   .fp_set:N = \l_zhvt_baseline_skip_ratio_fp,
     baselineskip_ratio  .initial:n = 1.5,
     jiazhu_font         .str_set:N = \l_zhvt_jiazhu_font_str,
-    jiazhu_font         .initial:n = Source~Han~Serif~SC~SemiBold,
+    jiazhu_font         .initial:n = Source~Han~Serif~SemiBold,
     paper_width         .dim_set:N = \l_zhvt_paper_width_dim,
     paper_width         .initial:n = 140mm,
     paper_height        .dim_set:N = \l_zhvt_paper_height_dim,
@@ -175,34 +180,32 @@
     \cleardoublepage
   }
 % 重定义章、节，以符合线装书样式
-\str_new:N \l_zhvt_current_chapter_title_str
-\tl_new:N  \l_zhvt_chapter_title_temp_tl
+\tl_new:N \l_zhvt_chapter_title_tl
 \tl_new:N \l_zhvt_content_line_tl
 \RenewDocumentCommand{\chapter}{smo}{%
     \cleardoublepage%
     \refstepcounter{chapter}%
-    \str_set:Nn \l_zhvt_current_chapter_title_str {#2}%
     \IfBooleanTF{#1}
-        {\tl_set:Nn \l_zhvt_chapter_title_temp_str {#2}}
-        {\tl_set:Nn \l_zhvt_chapter_title_temp_str {#2第\zhnum{chapter}}}%
-    \tl_set:Nn \l_zhvt_content_line_str {%
+        {\tl_set:Nn \l_zhvt_chapter_title_tl {#2}}
+        {\tl_set:Nn \l_zhvt_chapter_title_tl {#2第\zhnum{chapter}}}%
+    \tl_set:Nn \l_zhvt_content_line_tl {%
         \par\hspace{\int_use:N \l_zhvt_chapter_indent_int em}
-        \l_zhvt_chapter_title_temp_str
+        \l_zhvt_chapter_title_tl
     }%
-    \addtocontents{toc}{\l_zhvt_content_line_str}%
-    \mark_insert:nn { zhvt_chapter } {#2}
-    \l_zhvt_content_line_str%
+    \addtocontents{toc}{\l_zhvt_content_line_tl}%
+    \mark_insert:nn { zhvt_chapter } {\l_zhvt_chapter_title_tl}
+    \l_zhvt_content_line_tl%
     \IfNoValueF{#3}{\jiazhu{#3}}
     \par
 }
 \RenewDocumentCommand{\section}{mo}{%
     \refstepcounter{section}%
-    \tl_set:Nn \l_zhvt_content_line_str {%
+    \tl_set:Nn \l_zhvt_content_line_tl {%
         \par\hspace{\int_use:N \l_zhvt_section_indent_int em} #1%
     }%
-    \addtocontents{toc}{\l_zhvt_content_line_str}%
+    \addtocontents{toc}{\l_zhvt_content_line_tl}%
     \mark_insert:nn { zhvt_section } {#1}
-    \l_zhvt_content_line_str%
+    \l_zhvt_content_line_tl%
     \IfNoValueF{#2}{\jiazhu{#2}}
     \par
 }
@@ -244,7 +247,7 @@
     \bool_set_true:N  \l_zhvt_main_matter_bool
 }
 
-% 書名葉
+% 书名叶
 \RenewDocumentCommand \maketitle { O { 3 } m m O { \@title } }
   {
     \cleardoublepage
@@ -291,7 +294,7 @@
     \box_use_drop:N \g_tmpa_box
   }
 
-% 图像
+% 图像叶
 \NewDocumentCommand \insertgraphics { O { } m }
   {
     \cleardoublepage
