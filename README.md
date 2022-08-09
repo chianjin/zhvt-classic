@@ -11,7 +11,7 @@
 \begin{document}
 
 % 书名页
-\maketitle{宋新安朱文公章句並注}{壬寅夏潤州宜軒製版}[大~學~章~句]
+\maketitle{宋新安朱文公章句並注}{大~學~章~句}{壬寅夏潤州宜軒製版}
 
 % 目录页
 \setcounter{page}{1}
@@ -67,7 +67,7 @@
     frame_line_width    = 3pt,
     % 内外框线中心间距，默认为内框线宽度的 6 倍
     frame_sep           = 6pt,
-    % 框线、界栏、鱼尾颜色
+    % 框线、界栏、鱼口颜色
     grid_color          = red,
     % 句读垂直位移，默认向上 -0.4 倍字符尺寸
     judou_voffset       = -8pt,
@@ -82,12 +82,15 @@
 }
 ```
 
-## 特别致谢
+## 输出拼版
 
-感谢 @Qing Lee  (https://github.com/qinglee, https://www.zhihu.com/people/qinglee)
-开发的夹注宏包，使得本模板基本上实现了传统线装书的排版要求，并对作者使用该宏包过程中遇到的问题做了很多帮助。
+以上代码实际还是以横排、奇偶页方式实现的，所以输出的 PDF 也是以奇偶页方式分页的。与线装书的一叶（葉）概念不同。最终输出需要进行拼版。
 
-而且在本模板初次发布后，做了大量的修改，实现了自动拼版，修正了夹注跨页断行首行不能对齐的问题，用 l3draw 模块重写了所有版心、框线、鱼尾、界栏等版式部件。
+```shell
+# need pymupdf package, can be installed by pip
+# pip install pymupdf
+python tools/splice-page.py <path/some.pdf>
+```
 
 ## 版权说明
 
