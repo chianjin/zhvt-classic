@@ -154,7 +154,6 @@
 \NewDocumentCommand{\dou}{}{\judou{、}}
 
 % 序言環境
-\int_new:N \l_zhvt_foreword_margin_temp_int
 \NewDocumentEnvironment{foreword}{O{\l_zhvt_foreword_margin_int}}{%
     \begin{list}{}{
         \topsep\z@
