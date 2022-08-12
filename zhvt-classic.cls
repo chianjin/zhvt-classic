@@ -15,7 +15,7 @@
 \ProvidesClass{zhvt-classic}
 \ProcessOptions\relax
 \LoadClass[oneside]{book}   % 啟用 oneside 選項，避免左右間距的自動調整
-%\RequirePackage{expl3}
+\RequirePackage{expl3}
 \RequirePackage{xparse}
 \RequirePackage{etoolbox}
 \RequirePackage[LoadFandol=false]{xeCJK}
@@ -24,7 +24,7 @@
 \RequirePackage{atbegshi}   % 用於實現頁面旋轉、框綫、界欄、魚尾等版式部件
 \RequirePackage{tikz}
 \RequirePackage{keyval}
-\RequirePackage{jiazhu}     % 夾註包 https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu
+\RequirePackage{jiazhu}     % 割注包 https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu
 
 \ExplSyntaxOn
 % 使得夾註行寬總是漢字寬度的偶數倍
@@ -59,8 +59,8 @@
 \dim_new:N \l_zhvt_frame_sep_dim                % 內外框間距
 \str_new:N \l_zhvt_grid_color_str               % 欄框顏色
 \dim_new:N \l_zhvt_micro_offset_dim             % 字體旋轉後，行的視覺中綫有所變化，對此進行微調
-\fp_new:N \l_zhvt_judou_vertical_offset_fp      % 句讀垂直位移
-\fp_new:N \l_zhvt_judou_horizontal_offset_fp    % 句讀水平位移
+\fp_new:N \l_zhvt_judou_vertical_offset_fp    % 句讀垂直位移比例
+\fp_new:N \l_zhvt_judou_horizontal_offset_fp  % 句讀水平位移比例
 \int_new:N \l_zhvt_foreword_margin_int          % 序言環境縮進
 \int_new:N \l_zhvt_chapter_indent_int           % 章標題縮進
 \int_new:N \l_zhvt_section_indent_int           % 節標題縮進
@@ -100,9 +100,9 @@
     frame_sep           .initial:n = 6\l_zhvt_grid_line_width_dim,
     grid_color          .str_set:N = \l_zhvt_grid_color_str,
     grid_color          .initial:n = red,
-    judou_voffset        .fp_set:N = \l_zhvt_judou_vertical_offset_fp,
+    judou_voffset       .fp_set:N = \l_zhvt_judou_vertical_offset_fp,
     judou_voffset       .initial:n = -0.4,
-    judou_hoffset        .fp_set:N = \l_zhvt_judou_horizontal_offset_fp,
+    judou_hoffset       .fp_set:N = \l_zhvt_judou_horizontal_offset_fp,
     judou_hoffset       .initial:n = 0.3,
     foreword_margin     .int_set:N = \l_zhvt_foreword_margin_int,
     foreword_margin     .initial:n = 2,
@@ -146,16 +146,16 @@
 
 % 句讀
 \NewDocumentCommand{\judou}{m}{%
-    \CJKglue\begin{picture}(0,0)
+    \begin{picture}(0,0)
         \put(\fp_use:N \l_zhvt_judou_vertical_offset_fp em,\fp_use:N \l_zhvt_judou_horizontal_offset_fp em){#1}
-    \end{picture}\CJKglue
+    \end{picture}\CJKglue%
 }
 \NewDocumentCommand{\ju}{}{\judou{。}}
 \NewDocumentCommand{\dou}{}{\judou{、}}
 
 % 序言環境
-\NewDocumentEnvironment{foreword}{O{\l_zhvt_foreword_margin_int}}
-{%
+\int_new:N \l_zhvt_foreword_margin_temp_int
+\NewDocumentEnvironment{foreword}{O{\l_zhvt_foreword_margin_int}}{%
     \begin{list}{}{
         \topsep\z@
         \parskip\z@
@@ -268,8 +268,8 @@
     \titlematter
     \begin{picture}(\textwidth,\textheight)
         \put(0,\textheight-\baselineskip){\symbol{"3000}\parbox{\dimexpr\textwidth-\l_zhvt_font_size_dim}{#2}}
-        \put(0,0.5\textheight){\parbox{\textwidth}{%
-            \__zhvt_title_size: \hfil #4}
+        \put(0,0.5\textheight){\parbox[t]{\textwidth}{%
+            \__zhvt_title_size:\hfil{#4}}
         }
         \put(0,\baselineskip){\parbox{\dimexpr\textwidth-\l_zhvt_font_size_dim}{\hfill #3}\symbol{"3000}}
     \end{picture}
@@ -279,10 +279,11 @@
 % 圖像葉
 \NewDocumentCommand{\insertgraphics}{om}{
     \clearpage
+    \bool_set_eq:NN \l_tmpa_bool \l_zhvt_grid_lines_bool
     \bool_set_false:N \l_zhvt_grid_lines_bool
     \null \vfil \hfil \includegraphics[#1]{#2}
     \clearpage
-    \bool_set_true:N \l_zhvt_grid_lines_bool
+    \bool_set_eq:NN \l_zhvt_grid_lines_bool \l_tmpa_bool
 }
 
 % 繪製頁框、界欄、魚尾，設置版心等
@@ -457,7 +458,7 @@
         nomarginpar,
     }
     % 設置字體
-    \defaultCJKfontfeatures{RawFeature={vertical:+vert:+vhal}}
+    \defaultCJKfontfeatures{ Script = CJK , RawFeature = vertical }
     \setCJKmainfont{\l_zhvt_main_font_str}
     % 夾註相關設置
     \setCJKfamilyfont{jiazhufont}{\l_zhvt_jiazhu_font_str}
@@ -490,11 +491,12 @@
     \settowidth{\zhvt@noteboxwidth}{#1}%
     \raisebox{-0.5em}{%
         \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
-            \draw[draw=none,
+            \draw[
                 fill=black,
                 rounded corners=0.1em,
                 line width=0pt
-              ] (0,0) rectangle (\zhvt@noteboxwidth,1em);
+              ]
+                (0,0) rectangle (\zhvt@noteboxwidth,1em);
             \node[color=white,right] at (0, 0.88em) {#1};
         \end{tikzpicture}%
     }%
