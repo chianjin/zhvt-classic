@@ -70,9 +70,9 @@
     % 框线、界栏、鱼口颜色
     grid_color          = red,
     % 句读垂直位移，默认向上 -0.4 倍字符尺寸
-    judou_voffset       = -8pt,
+    judou_voffset       = -0.4,
     % 句读水平位移，默认向右 0.3 倍字符尺寸
-    judou_hoffset       = 6pt,
+    judou_hoffset       = 0.3,
     % 序言环境缩进，字符尺寸的倍数
     foreword_margin     = 2,
     % 章标题缩进，字符尺寸的倍数
