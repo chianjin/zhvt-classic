@@ -1,34 +1,33 @@
-% LaTeX 中文綫裝書模板
+% LaTeX 中文线装书模板
 %
 % 本模板：
-% 1. 個人免費使用，但僅限於：學習、研究、非經營性分發採用本模板
-%    生成的最終作品。
-% 2. 除此上述用途之外，請與本人聯係獲取授權。
-% 3. 本模板所引用宏包版權歸開發者所有，如需授權請自行聯繫。
+% 1. 个人免费使用，但仅限于：学习、研究、非经营性分发采用本模板
+%    生成的最终作品。
+% 2. 除此上述用途之外，请与本人联系获取授权。
+% 3. 本模板所引用宏包版权归开发者所有，如需授权请自行联系。
 %
-% 郵件： chianjin@foxmail.com
+% 邮件： chianjin@foxmail.com
 % 微信：w1280543
 %
-% 項目地址：https://github.com/chianjin/zhvt-classic
+% 项目地址：https://github.com/chianjin/zhvt-classic
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{zhvt-classic}
 \ProcessOptions\relax
-\LoadClass[oneside]{book}   % 啟用 oneside 選項，避免左右間距的自動調整
+\LoadClass[oneside]{book}   % 启用 oneside 选项，避免左右间距的自动调整
 \RequirePackage{xparse}
 \RequirePackage{etoolbox}
 \RequirePackage[LoadFandol=false]{xeCJK}
 \RequirePackage{zhnumber}
 \RequirePackage{geometry}
-\RequirePackage{atbegshi}   % 用於實現頁面旋轉、框綫、界欄、魚尾等版式部件
+\RequirePackage{atbegshi}   % 用于实现页面旋转、框线、界栏、鱼尾等版式部件
 \RequirePackage{tikz}
-%\RequirePackage{keyval}
 \RequirePackage{jiazhu}     % 割注包 https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu
 
 \ExplSyntaxOn
-% 使得夾註行寬總是漢字寬度的偶數倍
+% 使得夹注行宽总是汉字宽度的偶数倍
 % https://github.com/CTeX-org/ctex-kit/issues/631
-% 感謝 Qing Lee https://github.com/qinglee
+% 感谢 Qing Lee https://github.com/qinglee
 \cs_set_protected:Npn \__jiazhu_dim_normalize:N #1
 {
     \int_set:Nn \l_tmpa_int
@@ -43,32 +42,35 @@
     \dim_set_eq:NN \l__jiazhu_max_dim \l__jiazhu_width_dim
 }
 
-% 參數定義
-\str_new:N \l_zhvt_main_font_str                % 正文字體
-\str_new:N \l_zhvt_jiazhu_font_str              % 夾註字體
-\dim_new:N \l_zhvt_paper_width_dim              % 頁面寬度（頁面高度）
-\dim_new:N \l_zhvt_paper_height_dim             % 頁面高度（頁面寬度）
-\dim_new:N \l_zhvt_font_size_dim                % 字體尺寸
-\fp_new:N  \l_zhvt_baseline_skip_ratio_fp       % 行距倍數
-\int_new:N \l_zhvt_page_lines_int               % 每頁行數
-\int_new:N \l_zhvt_line_chars_int               % 每行字數
-\fp_new:N  \l_zhvt_top_bottom_ratio_fp          % 天頭、地腳高度比例
-\dim_new:N \l_zhvt_grid_line_width_dim          % 內框綫寬
-\dim_new:N \l_zhvt_frame_line_width_dim         % 外框綫寬
-\dim_new:N \l_zhvt_frame_sep_dim                % 內外框間距
-\str_new:N \l_zhvt_grid_color_str               % 欄框顏色
-\dim_new:N \l_zhvt_micro_offset_dim             % 字體旋轉後，行的視覺中綫有所變化，對此進行微調
-\fp_new:N \l_zhvt_judou_vertical_offset_fp      % 句讀垂直位移比例
-\fp_new:N \l_zhvt_judou_horizontal_offset_fp    % 句讀水平位移比例
-\int_new:N \l_zhvt_foreword_margin_int          % 序言環境縮進
-\int_new:N \l_zhvt_chapter_indent_int           % 章標題縮進
-\int_new:N \l_zhvt_section_indent_int           % 節標題縮進
+% 参数定义
+\str_new:N  \l_zhvt_main_font_str                % 正文字体
+\str_new:N  \l_zhvt_jiazhu_font_str              % 夹注字体
+\dim_new:N  \l_zhvt_paper_width_dim              % 页面宽度（页面高度）
+\dim_new:N  \l_zhvt_paper_height_dim             % 页面高度（页面宽度）
+\dim_new:N  \l_zhvt_font_size_dim                % 字体尺寸
+\fp_new:N   \l_zhvt_baseline_skip_ratio_fp       % 行距倍数
+\int_new:N  \l_zhvt_page_lines_int               % 每页行数
+\int_new:N  \l_zhvt_line_chars_int               % 每行字数
+\fp_new:N   \l_zhvt_top_bottom_ratio_fp          % 天头、地脚高度比例
+\dim_new:N  \l_zhvt_grid_line_width_dim          % 内框线宽
+\dim_new:N  \l_zhvt_frame_line_width_dim         % 外框线宽
+\dim_new:N  \l_zhvt_frame_sep_dim                % 内外框间距
+\str_new:N  \l_zhvt_grid_color_str               % 栏框颜色
+\bool_new:N \l_zhvt_grid_lines_bool              % 是否显示界栏
+\dim_new:N  \l_zhvt_micro_offset_dim             % 字体旋转后，行的视觉中线有所变化，对此进行微调
+\fp_new:N  \l_zhvt_judou_vertical_offset_fp      % 句读垂直位移比例
+\fp_new:N  \l_zhvt_judou_horizontal_offset_fp    % 句读水平位移比例
+\int_new:N \l_zhvt_foreword_margin_int           % 序言环境缩进
+\int_new:N \l_zhvt_chapter_indent_int            % 章标题缩进
+\int_new:N \l_zhvt_section_indent_int            % 节标题缩进
 
-\dim_new:N \l_zhvt_baseline_skip_dim            % 行距，兩行基綫的距離
-\dim_new:N \l_zhvt_line_sep_dim                 % 行間距，上行底部與下行頂部的距離
-\dim_new:N \l_zhvt_text_width_dim               % 文本寬度（文本高度）
-\dim_new:N \l_zhvt_text_height_dim              % 文本高度（文本寬度）
-\dim_new:N \l_zhvt_top_margin_dim               % 天頭高度（左側頁邊距）
+
+% 需要计算的长度
+\dim_new:N \l_zhvt_baseline_skip_dim            % 行距，两行基线的距离
+\dim_new:N \l_zhvt_line_sep_dim                 % 行间距，上行底部与下行顶部的距离
+\dim_new:N \l_zhvt_text_width_dim               % 文本宽度（文本高度）
+\dim_new:N \l_zhvt_text_height_dim              % 文本高度（文本宽度）
+\dim_new:N \l_zhvt_top_margin_dim               % 天头高度（左侧页边距）
 
 \keys_define:nn { zhvt } {
     main_font           .str_set:N = \l_zhvt_main_font_str,
@@ -99,6 +101,8 @@
     frame_sep           .initial:n = 6\l_zhvt_grid_line_width_dim,
     grid_color          .str_set:N = \l_zhvt_grid_color_str,
     grid_color          .initial:n = red,
+    grid_lines         .bool_set:N = \l_zhvt_grid_lines_bool,
+    grid_lines          .initial:n = true,
     judou_voffset        .fp_set:N = \l_zhvt_judou_vertical_offset_fp,
     judou_voffset       .initial:n = -0.4,
     judou_hoffset        .fp_set:N = \l_zhvt_judou_horizontal_offset_fp,
@@ -113,7 +117,7 @@
 \NewDocumentCommand { \zhvtset } { }
 { \keys_set:nn { zhvt } }
 
-% 計算後續所需的一些長度
+% 计算后续所需的一些长度
 \cs_new_protected:Nn \__zhvt_calculate_dimensions:
 {
     \dim_set:Nn \l_zhvt_baseline_skip_dim
@@ -144,13 +148,13 @@
 }
 
 
-% 實現 oneside 選項下的 \cleardoublepage
+% 实现 oneside 选项下的 \cleardoublepage
 \RenewDocumentCommand { \cleardoublepage } { }
 {%
     \clearpage \int_if_odd:nF \c@page { \hbox{} \newpage }
 }
 
-% 句讀
+% 句读
 \NewDocumentCommand { \judou } { m }
 {%
     \begin{picture} ( \c_zero_dim, \c_zero_dim )
@@ -161,7 +165,7 @@
 \NewDocumentCommand { \ju } { } { \judou {。} }
 \NewDocumentCommand { \dou } { } { \judou{、} }
 
-% 注釋標記
+% 注释标记
 \NewDocumentCommand { \notemark } { O { black } m }
 {%
     \raisebox { -0.5 em }
@@ -174,7 +178,7 @@
     }%
 }
 
-% 序言環境
+% 序言环境
 \NewDocumentEnvironment{ foreword } { O { \l_zhvt_foreword_margin_int } }
 {%
     \begin { list } { }
@@ -188,23 +192,23 @@
     \item [ ]
 }
 { \end { list } }
-% 序言環境別名，少打幾個字符
+% 序言环境别名，少打几个字符
 \NewDocumentEnvironment { fw } { } { \begin { foreword } } { \end { foreword } }
 
-% 夾註 Hack
-% 跨頁夾註，糾正位置偏移
-\NewDocumentCommand { \newpagejiazhu } { } { \vphantom { 國 } \jiazhu }
-% 夾註相關快捷命令，少打幾個字母
+% 夹注 Hack
+% 跨页夹注，纠正位置偏移
+\NewDocumentCommand { \newpagejiazhu } { } { \vphantom { 国 } \jiazhu }
+% 夹注相关快捷命令，少打几个字母
 \NewDocumentCommand { \jz } { } { \jiazhu }
 \NewDocumentCommand { \njz } { } { \newpagejiazhu }
 
-% 重定義目錄
+% 重定义目录
 \RenewDocumentCommand { \tableofcontents } { }
 {%
-    \tocmatter \skip_horizontal:n { \l_zhvt_font_size_dim * 2 } 目錄
+    \tocmatter \skip_horizontal:n { \l_zhvt_font_size_dim * 2 } 目录
     \@starttoc { toc } \cleardoublepage
 }
-% 重定義章、節，以符合綫裝書樣式
+% 重定义章、节，以符合线装书样式
 \tl_new:N \l_zhvt_current_chapter_title_tl
 \tl_new:N \l_zhvt_content_line_tl
 \RenewDocumentCommand { \chapter } { s m o }
@@ -235,7 +239,7 @@
     \par
 }
 
-% 傳統綫裝書，正反算一葉：1,2 -> 一，3,4 -> 二
+% 传统线装书，正反算一叶：1,2 -> 一，3,4 -> 二
 \int_new:N \l_zhvt_page_int
 \cs_new_protected:Nn \__zhvt_page:
 {%
@@ -243,7 +247,7 @@
     \zhnumber { \int_use:N \l_zhvt_page_int }%
 }
 
-% 文檔結構
+% 文档结构
 \bool_new:N \l_zhvt_title_matter_bool
 \bool_new:N \l_zhvt_foreword_matter_bool
 \bool_new:N \l_zhvt_toc_matter_bool
@@ -281,11 +285,11 @@
     \bool_set_true:N  \l_zhvt_main_matter_bool
 }
 
-% 奇偶頁右側間距，即原始頁面頂部間距。
-% 奇數頁左側、偶數頁右側各留一半行距的間距
-% 雙頁合併後，正好居中一行寬度的書口。
+% 奇偶页右侧间距，即原始页面顶部间距。
+% 奇数页左侧、偶数页右侧各留一半行距的间距
+% 双页合并后，正好居中一行宽度的书口。
 \cs_new_eq:NN \latex@outputpage \@outputpage
-% TODO: 待轉換為 expl3 語法
+% TODO: 待转换为 expl3 语法
 \def \@outputpage { \expandafter \__zhvt_set_output_voffset: \latex@outputpage }
 \cs_new_protected:Nn \__zhvt_set_output_voffset:
 {%
@@ -303,7 +307,7 @@
 %    {\expandafter \__zhvt_set_output_voffset: \latex@outputpage}
 %\cs_set_eq:NN \@outputpage \zhvt_outputpage
 
-% 書名葉
+% 书名叶
 \RenewDocumentCommand { \maketitle } { O { 3 } m m O { \@title } }
 {%
     \titlematter
@@ -330,7 +334,7 @@
     \cleardoublepage
 }
 
-% 圖像葉
+% 图像叶
 \NewDocumentCommand { \insertgraphics } { o m }
 {
     \clearpage
@@ -341,7 +345,7 @@
     \bool_set_eq:NN \l_zhvt_grid_lines_bool \l_tmpa_bool
 }
 
-% 繪製頁框、界欄、魚尾，設置版心等
+% 绘制页框、界栏、鱼尾，设置版心等
 \NewDocumentCommand { \zhvt@setlayout } { }
 {
     \__zhvt_set_page_center:
@@ -351,10 +355,10 @@
     \__zhvt_draw_grid_lines:
 }
 
-% 設置版心
+% 设置版心
 \cs_new_protected:Nn \__zhvt_set_page_center:
 {
-    % 書名
+    % 书名
     \int_if_odd:nTF \c@page
     {
         \put ( \l_zhvt_top_margin_dim,
@@ -366,7 +370,7 @@
             { \@title }
     }
 
-    % 篇名，頁碼，僅奇數頁
+    % 篇名，页码，仅奇数页
     \int_if_odd:nT \c@page
     {
         \put ( \l_zhvt_top_margin_dim + 0.4 \l_zhvt_text_height_dim,
@@ -374,10 +378,10 @@
         {%
             \jiazhusize%
             \bool_if:nT \l_zhvt_foreword_matter_bool { 序 }%
-            \bool_if:nT \l_zhvt_toc_matter_bool { 目錄 }%
+            \bool_if:nT \l_zhvt_toc_matter_bool { 目录 }%
             \bool_if:nT \l_zhvt_main_matter_bool { \l_zhvt_current_chapter_title_tl }
         }
-        % 頁碼
+        % 页码
         \bool_if:nF \l_zhvt_title_matter_bool
         {
             \put( \l_zhvt_top_margin_dim + 0.85 \l_zhvt_text_height_dim,
@@ -387,7 +391,7 @@
     }
 }
 
-% 設置內框坐標，upperleft 左上角，lowerright 右下角。
+% 设置内框坐标，upperleft 左上角，lowerright 右下角。
 \dim_new:N \l_zhvt_grid_upper_dim
 \dim_new:N \l_zhvt_grid_lower_dim
 \dim_new:N \l_zhvt_grid_left_dim
@@ -404,7 +408,7 @@
         { \c_zero_dim }
 }
 
-% 內框
+% 内框
 \cs_new_protected:Nn \__zhvt_draw_grid:
 {
     \put ( \c_zero_int, \c_zero_int )
@@ -447,7 +451,7 @@
     }
 }
 
-% 魚尾
+% 鱼尾
 \cs_new_protected:Nn \__zhvt_draw_yuwei:
 {
     \int_if_odd:nTF \c@page
@@ -550,9 +554,7 @@
     }
 }
 
-% 界欄
-\bool_new:N \l_zhvt_grid_lines_bool
-\bool_set_true:N \l_zhvt_grid_lines_bool
+% 界栏
 \NewDocumentCommand { \gridlines } { }
     { \bool_set_true:N \l_zhvt_grid_lines_bool }
 \NewDocumentCommand { \nogridlines } { }
@@ -605,23 +607,23 @@
 }
 
 \AtEndPreamble{
-    % 計算相關長度
+    % 计算相关长度
     \__zhvt_calculate_dimensions:
     \__zhvt_calculate_grid_position:
-    % 頁面尺寸設置
+    % 页面尺寸设置
     \geometry {
         paperwidth  = \l_zhvt_paper_height_dim,
         paperheight = \l_zhvt_paper_width_dim,
         textwidth   = \l_zhvt_text_height_dim,
         textheight  = \l_zhvt_text_width_dim,
-        % 左側間距（底部間距）設置為 0，後面根據奇偶頁進行調整
-        % 此處設為 -\zhvt@vtadjust 微調每行的視覺中心綫
+        % 左侧间距（底部间距）设置为 0，后面根据奇偶页进行调整
+        % 此处设为 -\zhvt@vtadjust 微调每行的视觉中心线
         top  = -\l_zhvt_micro_offset_dim,
         left = \l_zhvt_top_margin_dim,
         noheadfoot,
         nomarginpar,
     }
-    % 設置字體
+    % 设置字体
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l_zhvt_main_font_str }
     \RenewDocumentCommand { \normalsize } { }
@@ -629,7 +631,7 @@
         \fontsize { \l_zhvt_font_size_dim } { \l_zhvt_baseline_skip_dim }
         \selectfont
     }
-    % 夾註相關設置
+    % 夹注相关设置
     \setCJKfamilyfont { jiazhufont }{ \l_zhvt_jiazhu_font_str }
     \NewDocumentCommand { \jiazhufont } { } { \CJKfamily{jiazhufont } }
     \NewDocumentCommand { \jiazhusize } { }
@@ -643,9 +645,9 @@
         beforeskip = \c_zero_dim,
         afterskip  = \c_zero_dim,
     }
-    % 取消首行縮進
+    % 取消首行缩进
     \dim_zero:N \parindent
-    % 設置空頁面樣式
+    % 设置空页面样式
     \pagestyle{ empty }
 }
 
@@ -653,13 +655,13 @@
 
 \AtEndDocument{\cleardoublepage}
 
-% 輸出頁面
+% 输出页面
 \AtBeginShipout{%
-    % 旋轉頁面
+    % 旋转页面
     \global\setbox\AtBeginShipoutBox\vbox{%
         \special{pdf: put @thispage <</Rotate 90>>}%
         \box\AtBeginShipoutBox}%
-    % 輸出版心、框綫
+    % 输出版心、框线
     \AtBeginShipoutUpperLeft{%
         \zhvt@setlayout
     }
