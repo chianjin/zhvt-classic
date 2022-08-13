@@ -16,7 +16,6 @@
 \ProcessOptions\relax
 \LoadClass[oneside]{book}   % 启用 oneside 选项，避免左右间距的自动调整
 \RequirePackage{xparse}
-\RequirePackage{etoolbox}
 \RequirePackage[LoadFandol=false]{xeCJK}
 \RequirePackage{zhnumber}
 \RequirePackage{geometry}
@@ -322,23 +321,21 @@
   {%
     \titlematter
     \begin{picture} ( \textwidth , \textheight )
-        \put ( \c_zero_int, \textheight - \baselineskip )
+        \put ( \c_zero_int, \textheight - \baselineskip - \l__zhvt_micro_offset_dim )
           {
-            \skip_horizontal:n { \l__zhvt_font_size_dim }
-            \parbox [ t ] { \dim_eval:n { \textwidth - \l__zhvt_font_size_dim } } { #2 }
+            \skip_horizontal:n { \l__zhvt_font_size_dim } #2
           }
         \put ( \c_zero_int, 0.5 \textheight )
           {
-            \parbox [ t ] { \textwidth }
+            \parbox[t]{ \textwidth }
               {
                 \titlefont \fontsize{ #1 \l__zhvt_font_size_dim } { \c_zero_dim }
                 \selectfont \hfil { #4 }
               }
           }
-        \put ( \c_zero_int, \baselineskip )
+        \put ( \c_zero_int, \baselineskip - \l__zhvt_micro_offset_dim )
           {
-            \parbox [ t ] { \dim_eval:n { \textwidth - \l__zhvt_font_size_dim } } { \hfill #3 }
-            %\skip_horizontal:n { \l__zhvt_font_size_dim }
+            \hbox_to_wd:nn { \textwidth - \l__zhvt_font_size_dim } { \hfill #3 }
           }
     \end{picture}
     \cleardoublepage
@@ -613,7 +610,10 @@
       }
   }
 
-\AtEndPreamble
+%% 调整钩子顺序，避免警告
+\hook_gset_rule:nnnn { begindocument/before }
+  { zhvt } { < } { xeCJK  }
+\hook_gput_code:nnn { begindocument/before } { zhvt }
   {
     % 计算相关长度
     \__zhvt_calculate_dimensions:
@@ -635,15 +635,18 @@
     % 设置字体
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l__zhvt_main_font_str }
-    \newCJKfontfamily \titlefont { \l__zhvt_title_font_str }
     \RenewDocumentCommand { \normalsize } { }
       {
-        \fontsize { \l__zhvt_font_size_dim } { \l__zhvt_baseline_skip_dim }
+        \fontsize
+          { \l__zhvt_font_size_dim }
+          { \l__zhvt_baseline_skip_dim }
         \selectfont
       }
+    % 书名叶标题字体
+    \newCJKfontfamily \titlefont { \l__zhvt_title_font_str }
     % 夹注相关设置
     \newCJKfontfamily \jiazhufont { \l__zhvt_jiazhu_font_str }
-    \NewDocumentCommand { \jiazhusize } { }
+    \NewDocumentCommand \jiazhusize { }
       {
         \fontsize
           { \dim_eval:n { \l__zhvt_font_size_dim / 2 } }
@@ -652,20 +655,21 @@
       }
     \jiazhuset
       {
-        format = \jiazhufont,
-        ratio  = 1 / 2,
-        beforeskip = \c_zero_dim,
-        afterskip  = \c_zero_dim,
+        format     = \jiazhufont ,
+        ratio      = 1/2 ,
+        beforeskip = \c_zero_skip ,
+        afterskip  = \c_zero_skip ,
       }
-    % 取消首行缩进
+    % 取消缩进
     \dim_zero:N \parindent
-    % 设置空页面样式
+    % 空白页面样式
     \pagestyle { empty }
- }
+  }
+
+\hook_gput_code:nnn { enddocument } { zhvt }
+  { \cleardoublepage }
 
 \ExplSyntaxOff
-
-\AtEndDocument{\cleardoublepage}
 
 % 输出页面
 \AtBeginShipout

@@ -6,7 +6,7 @@ import fitz
 def splice_pages(pdf_file):
     temp_pdf = tempfile.TemporaryFile()
     pdf_file = Path(pdf_file)
-    dest_file = f'{pdf_file.parent / pdf_file.stem}-拼版.pdf'
+    dest_file = f'{pdf_file.parent / pdf_file.stem}-splice.pdf'
 
     # 取消源文件页面旋转
     with fitz.open(pdf_file) as pdf:
