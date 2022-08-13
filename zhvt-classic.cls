@@ -178,6 +178,9 @@
     \draw_end:
   }
 
+% 注释分割
+\NewDocumentCommand { \quan } { } { \symbol{ "25CB } }
+
 % 序言环境
 \NewDocumentEnvironment{ foreword } { O { \l__zhvt_foreword_margin_int } }
   {%
@@ -635,6 +638,8 @@
     % 设置字体
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l__zhvt_main_font_str }
+    % 添加白色圆圈
+    \xeCJKDeclareCharClass{CJK} {"25CB}
     \RenewDocumentCommand { \normalsize } { }
       {
         \fontsize
