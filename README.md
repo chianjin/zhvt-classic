@@ -48,7 +48,9 @@
     % 行距与字体尺寸的倍数
     baselineskip_ratio  = 1.5,
     % 夹注字体
-    jiazhu_font         = Source Han Serif SemiBold,
+    jiazhu_font         = Source Han Serif Medium,
+    % 书名标题字体
+    title_font          = Source Han Serif Bold,
     % 页面宽度，大32开
     paper_width         = 140mm,
     % 页面高度，大32开
