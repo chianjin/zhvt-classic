@@ -82,7 +82,7 @@
     main_font           .str_set:N = \l__zhvt_main_font_str,
     main_font           .initial:n = Source~Han~Serif~SemiBold,
     font_size           .dim_set:N = \l__zhvt_font_size_dim,
-    font_size           .initial:n = 20pt,
+    font_size           .initial:n = 27.32pt,    % 9.6mm，但不可直接用
     baselineskip_ratio   .fp_set:N = \l__zhvt_baseline_skip_ratio_fp,
     baselineskip_ratio  .initial:n = 1.5,
     jiazhu_font         .str_set:N = \l__zhvt_jiazhu_font_str,
@@ -90,17 +90,17 @@
     title_font          .str_set:N = \l__zhvt_title_font_str,
     title_font          .initial:n = Source~Han~Serif~Bold,
     paper_width         .dim_set:N = \l__zhvt_paper_width_dim,
-    paper_width         .initial:n = 140mm,
+    paper_width         .initial:n = 192mm,
     paper_height        .dim_set:N = \l__zhvt_paper_height_dim,
-    paper_height        .initial:n = 203mm,
+    paper_height        .initial:n = 288mm,
     page_lines          .int_set:N = \l__zhvt_page_lines_int,
     page_lines          .initial:n = 10,
     line_chars          .int_set:N = \l__zhvt_line_chars_int,
-    line_chars          .initial:n = 20,
+    line_chars          .initial:n = 21,
     top_bottom_ratio     .fp_set:N = \l__zhvt_top_bottom_ratio_fp,
     top_bottom_ratio    .initial:n = 2,
     micro_offset        .dim_set:N = \l__zhvt_micro_offset_dim,
-    micro_offset        .initial:n = 2.25pt,
+    micro_offset        .initial:n = 2.76pt,  % TODO  0.101 ? 880:120 ?
     grid_line_width     .dim_set:N = \l__zhvt_grid_line_width_dim,
     grid_line_width     .initial:n = 1pt,
     frame_line_width    .dim_set:N = \l__zhvt_frame_line_width_dim,
@@ -639,7 +639,7 @@
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l__zhvt_main_font_str }
     % 添加白色圆圈
-    \xeCJKDeclareCharClass{CJK} {"25CB}
+    \xeCJKDeclareCharClass{CJK} {"25A0 -> "25EF}
     \RenewDocumentCommand { \normalsize } { }
       {
         \fontsize

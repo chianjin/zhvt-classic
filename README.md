@@ -37,32 +37,44 @@
 
 ## 参数设置
 
-在 Preamble 部分使用 `\zhvtset{...}`，可设置排版的相关参数，参数说明如下：
+本模板默认参照清内府版《明史》尺寸。
+
+- 书：高九寸，宽六寸
+
+- 文：高七寸，宽四寸五分
+
+- 字：高三分，宽二分七厘，行四分五厘
+
+- 每叶二十行，左右半叶各十行；每行二十一字
+
+- 天头地脚：二比一
+
+按照清光绪三十四年营造尺库平制，一营造尺折算 320 mm，计算相关参数。这些参数可在 导言区使用 `\zhvtset`设置，参数说明及默认值如下：
 
 ```tex
 \zhvtset {
     % 字体
     main_font           = Source Han Serif SemiBold,
-    % 字体尺寸
-    font_size           = 20pt,
+    % 字体尺寸，三分，9.6mm，直接用 9.6mm 会有奇怪的问题
+    font_size           = 27.32pt,
     % 行距与字体尺寸的倍数
     baselineskip_ratio  = 1.5,
     % 夹注字体
     jiazhu_font         = Source Han Serif Medium,
     % 书名标题字体
     title_font          = Source Han Serif Bold,
-    % 页面宽度，大32开
-    paper_width         = 140mm,
-    % 页面高度，大32开
-    paper_height        = 203mm,
+    % 页面宽度，六寸
+    paper_width         = 192mm,
+    % 页面高度，九寸
+    paper_height        = 288mm,
     % 每页行数
     page_lines          = 10,
     % 每行字数
-    line_chars          = 20,
+    line_chars          = 21,
     % 天头地脚比例
     top_bottom_ratio    = 2,
     % 微调位移，使得左右页竖排中文对称
-    micro_offset        = 2.25pt,
+    micro_offset        = 2.76pt,
     % 内框线宽度
     grid_line_width     = 1pt,
     % 外框线宽度，默认为内框线的 3 倍
