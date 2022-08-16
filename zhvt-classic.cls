@@ -12,13 +12,12 @@
 % 项目地址：https://github.com/chianjin/zhvt-classic
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{zhvt-classic}
+\ProvidesClass{zhvt}
 \ProcessOptions\relax
-\LoadClass[oneside]{book}   % 启用 oneside 选项，避免左右间距的自动调整
+\LoadClass{book}
 \RequirePackage{xparse}
 \RequirePackage[LoadFandol=false]{xeCJK}
 \RequirePackage{zhnumber}
-\RequirePackage{geometry}
 \RequirePackage{atbegshi}   % 用于实现页面旋转、框线、界栏、鱼尾等版式部件
 \RequirePackage{tikz}
 \RequirePackage{l3draw}
@@ -42,6 +41,9 @@
     \dim_set:Nn \l__jiazhu_width_dim { \box_wd:N #1 }
     \dim_set_eq:NN \l__jiazhu_max_dim \l__jiazhu_width_dim
   }
+
+% 常量
+\dim_const:Nn \c_one_inch_dim { 1 in }
 
 % 参数定义
 \str_new:N  \l__zhvt_main_font_str                % 正文字体
@@ -144,17 +146,26 @@
       }
   }
 
-% 实现 oneside 选项下的 \cleardoublepage
-\RenewDocumentCommand \cleardoublepage { }
+\cs_new:Nn \__zhvt_set_layout:
   {
-    \clearpage
-    \int_if_even:nF { \g_shipout_totalpages_int }
-      { \hbox:n { } \newpage }
+    \dim_set:Nn \paperwidth { \l__zhvt_paper_height_dim }
+    \dim_set:Nn \paperheight { \l__zhvt_paper_width_dim }
+    \dim_set:Nn \textwidth { \l__zhvt_text_height_dim }
+    \dim_set:Nn \textheight { \l__zhvt_text_width_dim }
+    \dim_zero:N \headheight
+    \dim_zero:N \headsep
+    \dim_zero:N \footskip
+    \dim_zero:N \marginparwidth
+    \dim_zero:N \marginparsep
+    \dim_set:Nn \hoffset { \c_zero_dim }
+    \dim_set:Nn \topmargin { - \c_one_inch_dim - \l__zhvt_micro_offset_dim }
+    \dim_set:Nn \oddsidemargin { (\paperwidth - \textwidth) * 2 / 3 - \c_one_inch_dim }
+    \dim_set:Nn \evensidemargin { \oddsidemargin }
   }
 
 % 句读
 \NewDocumentCommand { \judou } { m }
-  {%
+  {%s
     \begin{picture} ( \c_zero_dim, \c_zero_dim )
         \put ( \fp_use:N \l__zhvt_judou_vertical_offset_fp em,
             \fp_use:N \l__zhvt_judou_horizontal_offset_fp em ) {#1}
@@ -622,19 +633,7 @@
     \__zhvt_calculate_dimensions:
     \__zhvt_calculate_grid_position:
     % 页面尺寸设置
-    \geometry
-      {
-        paperwidth  = \l__zhvt_paper_height_dim,
-        paperheight = \l__zhvt_paper_width_dim,
-        textwidth   = \l__zhvt_text_height_dim,
-        textheight  = \l__zhvt_text_width_dim,
-        % 左侧间距（底部间距）设置为 0，后面根据奇偶页进行调整
-        % 此处设为 -\zhvt@vtadjust 微调每行的视觉中心线
-        top  = -\l__zhvt_micro_offset_dim,
-        left = \l__zhvt_top_margin_dim,
-        noheadfoot,
-        nomarginpar,
-      }
+    \__zhvt_set_layout:
     % 设置字体
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l__zhvt_main_font_str }
@@ -665,8 +664,9 @@
         beforeskip = \c_zero_skip ,
         afterskip  = \c_zero_skip ,
       }
-    % 取消缩进
+    % 取消段落缩进和段间距
     \dim_zero:N \parindent
+    \dim_zero:N \parskip
     % 空白页面样式
     \pagestyle { empty }
   }
