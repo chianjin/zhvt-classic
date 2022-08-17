@@ -12,16 +12,18 @@
 % 项目地址：https://github.com/chianjin/zhvt-classic
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{zhvt}
+\ProvidesClass{zhvt-classic}
 \ProcessOptions\relax
+\RequirePackage{fix-cm}
 \LoadClass{book}
+\RequirePackage[no-math,LoadFandol=false]{xeCJK}
 \RequirePackage{xparse}
-\RequirePackage[LoadFandol=false]{xeCJK}
 \RequirePackage{zhnumber}
 \RequirePackage{atbegshi}   % 用于实现页面旋转、框线、界栏、鱼尾等版式部件
 \RequirePackage{tikz}
 \RequirePackage{l3draw}
 \RequirePackage{jiazhu}     % 割注包 https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu
+%\RequirePackage[verbose]{geometry}
 
 \ExplSyntaxOn
 % ===============================================================
@@ -45,6 +47,12 @@
 
 % 常量
 \dim_const:Nn \c_one_inch_dim { 1 in }
+\tl_const:Nn  \c_cjk_char_range_tl
+  {
+    "25A0 -> "25EF ,   % 几何符号
+    % "2630 -> "2637 ,   % 八卦
+    % "4DC0 -> "4DFF ,   % 六十四卦
+  }
 
 % 参数定义
 \str_new:N  \l__zhvt_main_font_str                % 正文字体
@@ -158,6 +166,7 @@
     \dim_zero:N \footskip
     \dim_zero:N \marginparwidth
     \dim_zero:N \marginparsep
+    \dim_zero:N \topskip
     \dim_set:Nn \hoffset { \c_zero_dim }
     \dim_set:Nn \topmargin { - \c_one_inch_dim - \l__zhvt_micro_offset_dim }
     \dim_set:Nn \oddsidemargin { (\paperwidth - \textwidth) * 2 / 3 - \c_one_inch_dim }
@@ -377,7 +386,7 @@
     \__zhvt_draw_grid_lines:
   }
 
-% 设置版心
+% 设置书口
 \cs_new_protected:Nn \__zhvt_set_page_center:
   {
     % 书名
@@ -630,6 +639,8 @@
   { zhvt } { < } { xeCJK  }
 \hook_gput_code:nnn { begindocument/before } { zhvt }
   {
+    % 抑制 underfull vbox 警告，没啥用处
+    \int_set:Nn \vbadness { 10000 }
     % 计算相关长度
     \__zhvt_calculate_dimensions:
     \__zhvt_calculate_grid_position:
@@ -639,7 +650,7 @@
     \defaultCJKfontfeatures { Script = CJK , RawFeature = vertical }
     \setCJKmainfont { \l__zhvt_main_font_str }
     % 添加白色圆圈
-    \xeCJKDeclareCharClass{CJK} {"25A0 -> "25EF}
+    \xeCJKDeclareCharClass { CJK } { \c_cjk_char_range_tl }
     \RenewDocumentCommand { \normalsize } { }
       {
         \fontsize
