@@ -2,6 +2,14 @@
 
 本 $\LaTeX$ 中文线装书模板，按照较为常见的传统线装书排版格式，实现框线、书口、目录、序言、夹注等排版元素，支持书名页、图像和句读。
 
+## 依赖宏包
+
+本模板依赖`jiazhu.sty`宏包。该宏包尚未收录进$\TeX Live$，需要手动下载安装。
+
+下载地址：[https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu](https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu)
+
+安装方法：[https://github.com/CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
+
 ## 基本使用
 
 ```tex
