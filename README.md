@@ -10,6 +10,12 @@
 
 安装方法：[https://github.com/CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
 
+## 默认字体
+
+本模板默认使用思源宋体，请自行下载安装。
+
+下载地址：[https://github.com/adobe-fonts/source-han-serif/tree/release#downloading-source-han-serif](https://github.com/adobe-fonts/source-han-serif/tree/release#downloading-source-han-serif)
+
 ## 基本使用
 
 ```tex
