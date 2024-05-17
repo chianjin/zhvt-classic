@@ -11,20 +11,20 @@
 \RequirePackage{fix-cm}
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{zhvt-tradition}
-  [Chinese Traditional Vertical Typesetting]
+\ProvidesClass{zhvt-classic}
+  [Chinese classic Vertical Typesetting]
 \ProcessOptions\relax
-\LoadClass[oneside,openany]{report}
+\LoadClass[oneside,openany]{book}
 
 \RequirePackage[LoadFandol=false]{xeCJK}
 \RequirePackage{jiazhu}
 \RequirePackage{zhnumber}
-
+\RequirePackage{graphicx}
 \RequirePackage{flowfram}
-
 \RequirePackage{hyperref}
 \RequirePackage{xparse}
 \RequirePackage{l3draw}
+
 
 \ExplSyntaxOn
 
@@ -38,10 +38,10 @@
   % 正文字体
   main~font           .str_set:N = \l__zhvt_main_font_str,
   main~font           .initial:n = GenRyuMin~TW~SB,
-  % 正文字号
+  % 正文字号，三分
   font~size           .dim_set:N = \l__zhvt_font_size_dim,
   font~size           .initial:n = 9.6mm,
-  % 行距，即基线间距
+  % 行距，即基线间距，四分五厘
   baseline~skip       .dim_set:N = \l__zhvt_baseline_skip_dim,
   baseline~skip       .initial:n = 14.4mm,
   % 夹注字体
@@ -49,15 +49,15 @@
   jiazhu~font         .initial:n = GenRyuMin~TW~M,
   % 夹注半高，若设置此选项，将忽略 jiazhu font stretch 参数
   jiazhu~half~size   .bool_set:N = \l__zhvt_jiazhu_half_size_bool,
-  jiazhu~half~size    .initial:n = false,
+  jiazhu~half~size    .initial:n = true,
   jiazhu~half~size    .default:n = true,
   % 夹注字体宽度缩放
   jiazhu~font~stretch  .fp_set:N = \l__zhvt_jiazhu_font_stretch_fp,
   jiazhu~font~stretch .initial:n = 0.625,
-  % 书宽
+  % 书宽，六寸
   book~width          .dim_set:N = \l__zhvt_book_width_dim,
   book~width          .initial:n = 192mm,
-  % 书高
+  % 书高，九寸
   book~height         .dim_set:N = \l__zhvt_book_height_dim,
   book~height         .initial:n = 288mm,
   % 单面行数
@@ -73,13 +73,13 @@
   % ( 880 - 1000 / 2 ) 1000 = 0.38
   micro~adjust~ratio   .fp_set:N = \l__zhvt_micro_adjust_ratio_fp,
   micro~adjust~ratio  .initial:n = 0.38,
-  % 界栏线宽度
+  % 界栏线宽度，一厘
   grid~line~width     .dim_set:N = \l__zhvt_grid_line_width_dim,
   grid~line~width     .initial:n = 0.32mm,
-  % 外框线宽度
+  % 外框线宽度，六厘
   frame~line~width    .dim_set:N = \l__zhvt_frame_line_width_dim,
   frame~line~width    .initial:n = 1.92mm,
-  % 界栏、外框间距
+  % 界栏、外框间距，六厘
   frame~sep           .dim_set:N = \l__zhvt_frame_sep_dim,
   frame~sep           .initial:n = 1.92mm,
   % 界栏颜色
@@ -92,8 +92,8 @@
   judou~hoffset       .dim_set:N = \l__zhvt_judou_horizontal_offset_dim,
   judou~hoffset       .initial:n = 0.3\l__zhvt_font_size_dim,
   % 序言标题缩进
-  foreword~indent     .int_set:N = \l__zhvt_foreword_indent_int,
-  foreword~indent     .initial:n = 2,
+  preface~margin     .int_set:N = \l__zhvt_preface_margin_int,
+  preface~margin     .initial:n = 2,
   % 章缩进
   chapter~indent      .int_set:N = \l__zhvt_chapter_indent_int,
   chapter~indent      .initial:n = 1,
@@ -137,6 +137,17 @@
 \dim_new:N \l__zhvt_shukou_page_number_height_dim
 % 书口页码垂直位置
 \dim_new:N \l__zhvt_shukou_page_number_start_dim
+% 标题
+\str_new:N \l__zhvt_title_str
+% 标题叶标题
+\tl_new:N \l__zhvt_title_display_tl
+% 标题叶标题尺寸倍数
+\fp_new:N \l__zhvt_title_display_ratio_fp
+% 作者
+\str_new:N \l__zhvt_author_str
+% 制作者
+\str_new:N \l__zhvt_maker_str
+
 
 
 %=================================
@@ -216,7 +227,9 @@
   \defaultCJKfontfeatures { RawFeature= { vertical:+vert:+vhal } }
   % 正文字体
   \setCJKmainfont { \l__zhvt_main_font_str }
+  \xeCJKDeclareSubCJKBlock { MARK } { "2588 }
 }
+\cs_new_protected:Nn \__zhvt_vphantom: { \vphantom { \symbol { "2588 } } }
 
 % 设置夹注选项
 \cs_new_protected:Nn \__zhvt_set_jiazhu_option: {
@@ -224,18 +237,24 @@
     { % 半高夹注
       %---------------------------------
       % 半高夹注 Hack
-      % 直排半高夹注高度总是汉字偶数高度倍，对齐正文
-      % https://github.com/CTeX-org/ctex-kit/issues/631
-      % 感謝 Qing Lee [https://github.com/qinglee]
-      \cs_set_protected:Npn \__jiazhu_dim_normalize:N ##1 {
-          \int_set:Nn \l_tmpa_int { \dim_ratio:nn { ##1 } { \l__jiazhu_unit_dim } }
-          \int_if_even:nF { \l_tmpa_int } { \int_incr:N \l_tmpa_int }
-          \dim_set:Nn ##1 { \l__jiazhu_unit_dim * \l_tmpa_int }
-      }
-      \cs_set_protected:Npn \__jiazhu_extract_max_width:N ##1 {
-          \dim_set:Nn \l__jiazhu_width_dim { \box_wd:N ##1 }
-          \dim_set_eq:NN \l__jiazhu_max_dim \l__jiazhu_width_dim
-      }
+      % 当半高夹注高度为夹注字体高度的奇数倍时，在夹注后面添加
+      % 一个夹注字体的高度
+      \cs_set_protected:Npn \__jiazhu_processing:
+        {
+            \__jiazhu_split_lines:
+            \__jiazhu_put_closing_box:
+            \__jiazhu_good_break:
+            \__jiazhu_hskip:N \l__jiazhu_after_skip_tl
+            \int_set:Nn \l_tmpa_int {
+              \dim_ratio:nn
+                { \l__jiazhu_max_dim } { \l__jiazhu_unit_dim }
+            }
+            \int_if_odd:nT \l_tmpa_int {
+              \skip_horizontal:n { \l__jiazhu_unit_dim }
+            }
+          \group_end:
+          \tex_ignorespaces:D
+        }
       %---------------------------------
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
       % 夹注行距比例 linespread，与正文行距比例相同
@@ -246,7 +265,7 @@
     { % 全高夹注，相当于缩小字号，垂直拉伸至正文字体等高。
       % 字体设置时的缩放比例是宽度缩放比例参数的倒数
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
-        [ FakeStretch = 1 / \l__zhvt_jiazhu_font_stretch_fp ]
+        [ FakeStretch = \fp_eval:n { 1 / \l__zhvt_jiazhu_font_stretch_fp } ]
       % 夹注行距比例 linespread
       \fp_set:Nn \l_tmpa_fp {
         0.5 * \l__zhvt_baseline_skip_ratio_fp / \l__zhvt_jiazhu_font_stretch_fp
@@ -275,7 +294,7 @@
   \dim_set_eq:NN \marginparpush \c_zero_dim
   \dim_set_eq:NN \paperwidth \l__zhvt_book_height_dim
   \dim_set:Nn \paperheight { \l__zhvt_book_width_dim * 2}
-  \dim_set_eq:NN \textwidth \l__zhvt_text_height_dim
+  \dim_set:Nn \textwidth {\l__zhvt_text_height_dim + 0.5em}
   \dim_set:Nn \textheight { \l__zhvt_text_width_dim + \l__zhvt_line_sep_dim }
   \dim_set_eq:NN \voffset \l__zhvt_right_margin_dim
   \dim_set_eq:NN \hoffset \l__zhvt_top_margin_dim
@@ -336,12 +355,71 @@
   \setalldynamicframes { valign = t }
 }
 % 设置书口内容
-\cs_new_protected:Npn \__zhvt_set_shukou_content:n #1 {
-  \setstaticcontents * { title }{ \@title }
-  \setdynamiccontents * { chapter }{ #1 }
+% 书口章标题
+\str_new:N \l__zhvt_chapter_title_str
+\cs_new_protected:Nn \__zhvt_set_shukou_content: {
+  \setstaticcontents * { title }{ \l__zhvt_title_str }
+  \setdynamiccontents * { chapter }{ \str_use:N \l__zhvt_chapter_title_str }
   \setdynamiccontents * { page~number }{ \zhnum { page } }
 }
 
+% 标题叶
+% 参数： 右半叶界栏，左半叶界栏
+\cs_new_protected:Nn \__zhvt_make_title_page: {
+    \nointerlineskip
+    % 作者
+    \hbox_set:Nn \l_tmpa_box {
+      \box_move_down:nn
+        { \l__zhvt_font_size_dim + \l__zhvt_line_sep_dim / 2 }
+        {
+          \hbox_to_wd:nn { \l__zhvt_text_height_dim - \l__zhvt_font_size_dim }
+            {
+              \skip_horizontal:n { \l__zhvt_font_size_dim }
+              \__zhvt_vphantom: \l__zhvt_author_str \hss
+            }
+        }
+    }
+    \box_use_drop:N \l_tmpa_box
+    % 对齐空白
+    \vfill
+    % 标题
+    \dim_set:Nn \l_tmpa_dim {
+      \fp_to_dim:n
+        { \l__zhvt_font_size_dim * \l__zhvt_title_display_ratio_fp }
+    }
+    \dim_set:Nn \l_tmpb_dim {
+       \l_tmpa_dim - \l__zhvt_line_sep_dim * 3 / 2
+         - \l__zhvt_micro_adjust_dim
+    }
+    \hbox_set:Nn \l_tmpa_box {
+      \box_move_up:nn { \l_tmpb_dim }
+        {
+          \hbox_to_wd:nn { \l__zhvt_text_height_dim } {
+            \fontsize { \l_tmpa_dim } { \c_zero_skip }
+            \selectfont
+            \hss \__zhvt_vphantom: \l__zhvt_title_display_tl \hss
+        }
+      }
+    }
+    \box_use_drop:N \l_tmpa_box
+    % 对齐空白
+    \vfill
+    % 制作者
+    \hbox_set:Nn \l_tmpa_box {
+      \box_move_up:nn { \l__zhvt_font_size_dim + \l__zhvt_micro_adjust_dim }
+      {
+        \hbox_to_wd:nn { \l__zhvt_text_height_dim }
+          {
+            \hss
+            \__zhvt_vphantom: \l__zhvt_maker_str
+            \skip_horizontal:n { \l__zhvt_font_size_dim }
+          }
+      }
+    }
+    \box_use_drop:N \l_tmpa_box
+    \clearpage
+    \gridall
+}
 
 % ================================
 % 绘制框线
@@ -516,42 +594,81 @@
 % 绘制外框
 \cs_new_protected:Nn \__zhvt_draw_frame: {
   \put ( \l__zhvt_frame_top_offset_dim, \l__zhvt_frame_right_offset_dim )
-  {
+    {
+      \draw_begin:
+        \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
+        \draw_linewidth:n { \l__zhvt_frame_line_width_dim }
+        \draw_path_rectangle:nn
+          { 0 , 0 }
+          { \l__zhvt_frame_height_dim , \l__zhvt_frame_width_dim }
+        \draw_path_use_clear:n { stroke }
+      \draw_end:
+    }
+}
+% 绘制单面界栏
+\cs_new_protected:Npn \__zhvt_draw_page_grid_lines:N #1 {
+  \clist_if_empty:NF #1 {
     \draw_begin:
       \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
-      \draw_linewidth:n { \l__zhvt_frame_line_width_dim }
-      \draw_path_rectangle:nn
-        { 0 , 0 }
-        { \l__zhvt_frame_height_dim , \l__zhvt_frame_width_dim }
+      \draw_linewidth:n { \l__zhvt_grid_line_width_dim }
+      \clist_map_inline:Nn #1
+        {
+          \dim_set:Nn \l_tmpa_dim {
+            \l__zhvt_baseline_skip_dim * ( \l__zhvt_page_lines_int - ##1 )
+          }
+          \draw_path_moveto:n
+            { 0 , \l_tmpa_dim }
+          \draw_path_lineto:n
+            { \l__zhvt_grid_height_dim, \l_tmpa_dim }
+        }
       \draw_path_use_clear:n { stroke }
+      % 丑陋
+      \draw_path_moveto:n { 0 , 0 }
+  %    \draw_path_lineto:n { 0 , 0 }
     \draw_end:
   }
 }
+% 绘制界栏
+% 设置界栏位置
+\clist_new:N \l__zhvt_all_grid_steps_clist
+\clist_new:N \l__zhvt_right_grid_steps_clist
+\clist_new:N \l__zhvt_left_grid_steps_clist
+% 全部界栏
+\int_step_inline:nnn { 1 } { \l__zhvt_page_lines_int } {
+  \clist_put_right:Nn \l__zhvt_all_grid_steps_clist { #1 }
+}
+% 设置单页界栏
+% #1： all - 全部界栏，none - 无界栏，其他定制界栏 ：
+\cs_new_protected:Npn \__zhvt_set_page_grid_steps:Nn #1#2 {
+  \bool_case:n {
+    { \str_compare_p:nNn { #2 } = { all } }
+      { \clist_set_eq:NN #1 \l__zhvt_all_grid_steps_clist }
+    { \str_compare_p:nNn { #2 } = { none } }
+      { \clist_clear:N #1 }
+    { ! \clist_if_empty_p:n { #2 } }
+      { \clist_set:Nn #1 { #2 } }
+  }
+}
+% 设置筒子叶所有界栏
+\cs_new_protected:Npn \__zhvt_set_grid_steps:nn #1#2 {
+  \__zhvt_set_page_grid_steps:Nn \l__zhvt_right_grid_steps_clist { #1 }
+  \__zhvt_set_page_grid_steps:Nn \l__zhvt_left_grid_steps_clist { #2 }
+}
+% 绘制界栏
+\cs_new_protected:Nn \__zhvt_draw_grid_lines: {
+  % 右侧界栏
+  \put
+    (
+      \l__zhvt_grid_top_offset_dim ,
+      \l__zhvt_grid_right_offset_dim + \l__zhvt_page_text_width_dim
+        + \l__zhvt_baseline_skip_dim
+    )
+    { \__zhvt_draw_page_grid_lines:N \l__zhvt_right_grid_steps_clist }
+  % 左侧界栏
+  \put ( \l__zhvt_grid_top_offset_dim , \l__zhvt_grid_right_offset_dim )
+    { \__zhvt_draw_page_grid_lines:N \l__zhvt_left_grid_steps_clist }
+}
 
-
-% 设置界栏步长
-%\clist_new:N \l__zhvt_text_box_grid_step_clist
-%\cs_new_protected:Npn \__zhvt_set_text_box_grid_step:nn #1#2 {
-%  \str_if_eq:nnTF { #2 } { nogrid }
-%    { % 无界栏
-%      \clist_clear:N \l__zhvt_text_box_grid_step_clist
-%    }
-%    { % 界栏
-%      \clist_if_empty:nTF { #1 }
-%      { % 绘制所有界栏
-%        \int_step_inline:nnn { 1 } { \l__zhvt_semi_page_lines_int }
-%          {
-%            \clist_put_right:Nn
-%              \l__zhvt_text_box_grid_step_clist { ##1 }
-%          }
-%      }
-%      { % 定制界栏
-%        \clist_set:Nn \l__zhvt_text_box_grid_step_clist { #1 }
-%      }
-%    }
-%  \clist_set
-%}
-%
 
 %=================================
 % 文档构建的相关钩子
@@ -573,15 +690,19 @@
   \pagestyle { empty }
 }
 % 设置字体、标题盒子
+\bool_new:N \l__zhvt_make_title_bool
+\bool_set_false:N \l__zhvt_make_title_bool
 \hook_gput_code:nnn { begindocument } { zhvt } {
   \fontsize { \l__zhvt_font_size_dim } { \l__zhvt_baseline_skip_dim }
   \selectfont
-  \__zhvt_set_shukou_content:n { }
+  \__zhvt_set_shukou_content:
+  \__zhvt_set_grid_steps:nn { all } { all }
 }
 
 \hook_gput_code:nnn { shipout / foreground } { zhvt } {
   \__zhvt_draw_grid:
   \__zhvt_draw_frame:
+  \__zhvt_draw_grid_lines:
 }
 
 \hook_gput_code:nnn { shipout / firstpage } { zhvt }
@@ -595,14 +716,172 @@
 \NewDocumentCommand { \zhvtset } { }
 { \keys_set:nn { zhvt } }
 
+% 设置标题
+\DeclareDocumentCommand { \title } { m o O { 3 } } {
+  % 标题
+  \str_set:Nn \l__zhvt_title_str { #1 }
+  % 标题叶标题
+  \IfNoValueTF{ #2 }
+    { \tl_set:Nn \l__zhvt_title_display_tl { #1 } }
+    { \tl_set:Nn \l__zhvt_title_display_tl { #2 } }
+  % 标题叶标题尺寸倍数
+  \fp_set:Nn \l__zhvt_title_display_ratio_fp { #3 }
+}
+% 设置作者
+\DeclareDocumentCommand { \author } { m } {
+  \str_set:Nn \l__zhvt_author_str { #1 }
+}
+% 设置制作者
+\NewDocumentCommand { \maker } { m } {
+  \str_set:Nn \l__zhvt_maker_str { #1 }
+}
 
-\DeclareDocumentCommand { \maketitle }
-  { O { \@title } O {\c_empty_box } O{\c_empty_box } }
+\DeclareDocumentCommand{ \maketitle }
+  { O { 2, \int_eval:n { \l__zhvt_page_lines_int - 2} } O { none } }
   {
-    #2 \vfill
-    \hfil {\fontsize{60pt}{\c_zero_dim}\raisebox{30.4pt}{#1}}\vfill
-    #3
+    \bool_set_true:N \l__zhvt_make_title_bool
+    \grid { #1 } { #2 }
+    \__zhvt_make_title_page:
+    \clearpage
+    \gridall
+  }
+
+% 重定义目录
+\RenewDocumentCommand \tableofcontents { }
+  {
+    \clearpage
+%    \skip_horizontal:n
+%      { \l__zhvt_font_size_dim * \l__zhvt_chapter_indent_int }
+    目錄
+    \@starttoc { toc }
     \clearpage
   }
 
+% 重定义章、节
+\RenewDocumentCommand \chapter { s o m o } {%
+    \clearpage
+    \refstepcounter { chapter }
+    \IfBooleanTF { #1 }
+        { \str_set:Nn \l_tmpa_str { #3 } }
+        { \str_set:Nn \l_tmpa_str { #3 第 \zhnum{chapter} } }
+    \IfNoValueTF { #2 }
+      { \str_set_eq:NN \l__zhvt_chapter_title_str \l_tmpa_str }
+      { \str_set:Nn \l__zhvt_chapter_title_str { #2 } }
+    \tl_set:Nn \l_tmpb_tl {%
+        \par \hspace { \int_use:N \l__zhvt_chapter_indent_int em}
+        \l_tmpa_str
+    }%
+    \addtocontents { toc } { \l_tmpb_tl }%
+    \skip_horizontal:n
+      { \l__zhvt_font_size_dim * \l__zhvt_chapter_indent_int }
+    \l_tmpa_str
+    \IfNoValueF { #4 } { \jiazhu { #4 } }
+    \par
+}
+\RenewDocumentCommand { \section } { m o } {
+    \refstepcounter { section }
+    \tl_set:Nn \l_tmpa_tl {
+        \par\hspace{\int_use:N \l__zhvt_section_indent_int em} #1
+    }
+    \addtocontents{toc}{\l_tmpa_tl}
+    \skip_horizontal:n
+      { \l__zhvt_font_size_dim * \l__zhvt_section_indent_int }
+    #1
+    \IfNoValueF{#2}{\jiazhu{#2}}
+    \par
+}
+
+% 图像
+\NewDocumentCommand \insertgraphics { O { } m }
+  {
+    \vbox_to_ht:nn { \l__zhvt_page_text_width_dim }
+    {
+      \vss
+      \hbox_to_wd:nn { \l__zhvt_text_height_dim }
+        { \hss \includegraphics [#1] {#2} \hss }
+      \vss
+    }
+  }
+
+% 小序环境
+\NewDocumentEnvironment { preface } { O { \l__zhvt_preface_margin_int } }
+  {%
+    \begin { list } { }
+      {
+        \dim_set_eq:NN \topsep \c_zero_dim
+        \dim_set_eq:NN \parskip \c_zero_dim
+        \dim_set_eq:NN \parsep \c_zero_dim
+        \dim_set_eq:NN \partopsep \c_zero_dim
+        \dim_set:Nn \leftmargin { \int_use:N #1 em }
+    } \item [ ]
+  }
+  { \end { list } }
+
+\NewDocumentCommand{ \pf } { m } {
+  \begin{preface}
+  #1
+  \end{preface}
+}
+
+% 句
+\NewDocumentCommand{\ju}{}{
+  \hbox_overlap_left:n {
+    \draw_begin:
+    \draw_path_moveto:n { 0 , 0 }
+    \draw_linewidth:n { 0.03em}
+    \draw_path_circle:nn { 0em , 0.5em } { 0.12em }
+    \draw_path_use_clear:n { stroke }
+    \draw_end:
+  }
+  \CJKglue
+}
+
+% 读
+\NewDocumentCommand { \dou } { } {
+  \hbox_overlap_left:n {
+    \draw_begin:
+      \draw_path_moveto:n { 0 , 0 }
+      \draw_transform_shift:n { 0 , 0.4em }
+      \draw_transform_rotate:n { 90 }
+      \draw_transform_scale:n {
+        0.25 * \dim_ratio:nn { \l__zhvt_font_size_dim } { 10pt }
+      }
+      \draw_path_moveto:n { 8.16 , 0}
+      \draw_path_curveto:nnn
+        {7.34 , 0 } {6.66 , 0.6 } { 6.12 , 1.8 }
+      \draw_path_curveto:nnn
+        {4.76 , 4.6 } { 2.72 , 7.13 }{ 0, 9.4 }
+      \draw_path_lineto:n { 0.4 , 10 }
+      \draw_path_curveto:nnn
+        { 4.88 , 8.69 } { 7.83 , 6.88 } { 9.24 , 4.56}
+      \draw_path_curveto:nnn
+        { 9.86 , 3.6 } { 10 , 2.61 } { 9.96 , 1.6 }
+      \draw_path_curveto:nnn
+        { 9.75 , 0.53 } { 9.15 , 0 } { 8.16 , 0 }
+      \draw_path_close:
+      \draw_path_use_clear:n { fill }
+    \draw_end:
+  }\CJKglue
+}
+
+% 句读快捷方式
+\char_set_catcode_active:N 。
+\char_set_catcode_active:N 、
+\char_set_active_eq:NN 。\ju
+\char_set_active_eq:NN 、\dou
+
+% 界栏设置
+\NewDocumentCommand { \gridall } { } {
+  \__zhvt_set_grid_steps:nn { all } { all }
+}
+
+\NewDocumentCommand { \gridnone } { } {
+  \__zhvt_set_grid_steps:nn { none } { none }
+}
+
+\NewDocumentCommand { \grid } { m m } {
+  \__zhvt_set_grid_steps:nn { #1 } { #2 }
+}
+
 \ExplSyntaxOff
+
