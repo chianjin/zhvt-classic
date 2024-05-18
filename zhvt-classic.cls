@@ -71,8 +71,8 @@
   top~bottom~ratio    .initial:n = 2,
   % 水平位置微调比例，字深 120， 字高 880
   % ( 880 - 1000 / 2 ) 1000 = 0.38
-  micro~adjust~ratio   .fp_set:N = \l__zhvt_micro_adjust_ratio_fp,
-  micro~adjust~ratio  .initial:n = 0.38,
+  adjust~ratio         .fp_set:N = \l__zhvt_adjust_ratio_fp,
+  adjust~ratio        .initial:n = 0.38,
   % 界栏线宽度，一厘
   grid~line~width     .dim_set:N = \l__zhvt_grid_line_width_dim,
   grid~line~width     .initial:n = 0.32mm,
@@ -85,34 +85,27 @@
   % 界栏颜色
   grid~color          .str_set:N = \l__zhvt_grid_color_str,
   grid~color          .initial:n = red,
-  % 句读垂直位移
-  judou~voffset       .dim_set:N = \l__zhvt_judou_vertical_offset_dim,
-  judou~voffset       .initial:n = -0.4\l__zhvt_font_size_dim,
-  % 句读水平位移
-  judou~hoffset       .dim_set:N = \l__zhvt_judou_horizontal_offset_dim,
-  judou~hoffset       .initial:n = 0.3\l__zhvt_font_size_dim,
-  % 序言标题缩进
+  % 小序缩进
   preface~margin     .int_set:N = \l__zhvt_preface_margin_int,
   preface~margin     .initial:n = 2,
-  % 章缩进
+  % 章标题缩进
   chapter~indent      .int_set:N = \l__zhvt_chapter_indent_int,
   chapter~indent      .initial:n = 1,
-  % 节缩进
+  % 节标题缩进
   section~indent      .int_set:N = \l__zhvt_section_indent_int,
   section~indent      .initial:n = 2,
   % 书口标题字数
-  center~title~chars  .int_set:N = \l__zhvt_shukou_title_chars_int,
-  center~title~chars  .initial:n = 6,
-  % 书口页面字数
-  center~page~number~chars .int_set:N = \l__zhvt_shukou_page_number_chars_int,
-  center~page~number~chars .initial:n = 4,
-
+  shukou~title~chars  .int_set:N = \l__zhvt_shukou_title_chars_int,
+  shukou~title~chars  .initial:n = 6,
+  % 书口页码字数
+  shukou~page~number~chars .int_set:N = \l__zhvt_shukou_page_number_chars_int,
+  shukou~page~number~chars .initial:n = 4,
 }
 
 % 其他参数，需由选项参数计算
 %---------------------------------
 % 水平微调距离
-\dim_new:N \l__zhvt_micro_adjust_dim
+\dim_new:N \l__zhvt_adjust_dim
 % 行间距，上行底部到下行顶部的距离
 \dim_new:N \l__zhvt_line_sep_dim
 % 行距与字高倍数
@@ -191,8 +184,8 @@
     }
   }
   % 水平位置微调距离，向右为正
-  \dim_set:Nn \l__zhvt_micro_adjust_dim {
-    \fp_to_dim:n { \l__zhvt_font_size_dim * \l__zhvt_micro_adjust_ratio_fp }
+  \dim_set:Nn \l__zhvt_adjust_dim {
+    \fp_to_dim:n { \l__zhvt_font_size_dim * \l__zhvt_adjust_ratio_fp }
   }
   % 书口标题高度：字高 * 书口标题字数
   \dim_set:Nn \l__zhvt_shukou_title_height_dim {
@@ -298,7 +291,7 @@
   \dim_set:Nn \textheight { \l__zhvt_text_width_dim + \l__zhvt_line_sep_dim }
   \dim_set_eq:NN \voffset \l__zhvt_right_margin_dim
   \dim_set_eq:NN \hoffset \l__zhvt_top_margin_dim
-  \dim_set:Nn \topmargin { - \l__zhvt_micro_adjust_dim - 1in }
+  \dim_set:Nn \topmargin { - \l__zhvt_adjust_dim - 1in }
   \dim_set:Nn \oddsidemargin { - 1in }
   \dim_set:Nn \evensidemargin \oddsidemargin
 }
@@ -389,7 +382,7 @@
     }
     \dim_set:Nn \l_tmpb_dim {
        \l_tmpa_dim - \l__zhvt_line_sep_dim * 3 / 2
-         - \l__zhvt_micro_adjust_dim
+         - \l__zhvt_adjust_dim
     }
     \hbox_set:Nn \l_tmpa_box {
       \box_move_up:nn { \l_tmpb_dim }
@@ -406,7 +399,7 @@
     \vfill
     % 制作者
     \hbox_set:Nn \l_tmpa_box {
-      \box_move_up:nn { \l__zhvt_font_size_dim + \l__zhvt_micro_adjust_dim }
+      \box_move_up:nn { \l__zhvt_font_size_dim + \l__zhvt_adjust_dim }
       {
         \hbox_to_wd:nn { \l__zhvt_text_height_dim }
           {
@@ -792,7 +785,7 @@
 }
 
 % 图像
-\NewDocumentCommand \insertgraphics { O { } m }
+\NewDocumentCommand \insertgraphic { O { } m }
   {
     \vbox_to_ht:nn { \l__zhvt_page_text_width_dim }
     {
