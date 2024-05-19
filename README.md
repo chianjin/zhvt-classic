@@ -6,8 +6,6 @@
 
 本模板依赖`jiazhu.sty`宏包。该宏包尚未收录进$\TeX Live$，需要手动下载安装。
 
-
-
 安装方法：[GitHub: CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
 
 ## 默认字体
