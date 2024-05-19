@@ -6,15 +6,15 @@
 
 本模板依赖`jiazhu.sty`宏包。该宏包尚未收录进$\TeX Live$，需要手动下载安装。
 
-下载地址：[https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu](https://github.com/CTeX-org/ctex-kit/tree/master/jiazhu)
 
-安装方法：[https://github.com/CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
+
+安装方法：[GitHub: CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
 
 ## 默认字体
 
 本模板默认使用基于思源宋体修改的源流明体。请自行下载安装。
 
-下载地址：[https://github.com/ButTaiwan/genryu-font](https://github.com/ButTaiwan/genryu-font)
+下载地址：[GitHub: ButTaiwan/genryu-font](https://github.com/ButTaiwan/genryu-font)
 
 Windows 用户解压后右键点击选择“为所有用户安装”，否则可能报找不到字体的错误。
 
@@ -220,7 +220,7 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 
 夹注跨面或者跨页时，首行若无正文，夹注位置会发生偏移。这个问题在现代直排中并无大碍。但在传统直排中是无法接受的。经与夹注宏包开发者讨论，暂时无法自动处理。
 
-[https://github.com/CTeX-org/ctex-kit/issues/631](https://github.com/CTeX-org/ctex-kit/issues/631)
+[GitHub: CTeX-org/ctex-kit/issues/631](https://github.com/CTeX-org/ctex-kit/issues/631)
 
 作为替代方案，在夹注跨面断行处截断成两个夹注，之间插入零宽度影子字符。本模板使用`Full Block █ (U+2588)`作为影子字符，定义`\zhvt`命令共使用。
 
