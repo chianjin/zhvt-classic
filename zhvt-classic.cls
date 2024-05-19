@@ -238,6 +238,7 @@
             \__jiazhu_put_closing_box:
             \__jiazhu_good_break:
             \__jiazhu_hskip:N \l__jiazhu_after_skip_tl
+            %\__zhvt_vphantom:
             \int_set:Nn \l_tmpa_int {
               \dim_ratio:nn
                 { \l__jiazhu_max_dim } { \l__jiazhu_unit_dim }
@@ -270,8 +271,8 @@
   \jiazhuset {
     format = \linespread { \fp_use:N \l_tmpa_fp } \jiazhufont,
     ratio = \l_tmpb_fp,
-    beforeskip = \c_zero_dim,
-    afterskip = \c_zero_dim,
+    beforeskip = 0pt plus 0.0001em, % \c_zero_dim,
+    afterskip = 0pt plus 0.0001em, % 避免夹注后正文单字无法换行
     % 夹注快捷符号
     shortcut=【】
   }
@@ -306,7 +307,7 @@
   % 高度（横排宽度），宽度（横排高度）
   % 距顶部位置（横排距左侧位置），左侧位置（横排距底部高度）
   % 盒子标签
-  % 右半叶
+  % 正面
   \newflowframe
     { \l__zhvt_text_height_dim }
     { \l__zhvt_page_text_width_dim }
@@ -315,14 +316,14 @@
       \dim_eval:n
         { \l__zhvt_baseline_skip_dim * ( \l__zhvt_page_lines_int + 1 ) }
     }
-    [ right ]
-  % 左半叶
+    [ front ]
+  % 反面
   \newflowframe
     { \l__zhvt_text_height_dim }
     { \l__zhvt_page_text_width_dim }
     { \c_zero_dim }
     { \c_zero_dim }
-    [ left ]
+    [ back ]
   % 书口标题
   \newstaticframe
     { \l__zhvt_shukou_title_height_dim }
@@ -357,7 +358,7 @@
 }
 
 % 标题叶
-% 参数： 右半叶界栏，左半叶界栏
+% 参数：正面界栏，反面界栏
 \cs_new_protected:Nn \__zhvt_make_title_page: {
     \nointerlineskip
     % 作者
@@ -624,8 +625,8 @@
 % 绘制界栏
 % 设置界栏位置
 \clist_new:N \l__zhvt_all_grid_steps_clist
-\clist_new:N \l__zhvt_right_grid_steps_clist
-\clist_new:N \l__zhvt_left_grid_steps_clist
+\clist_new:N \l__zhvt_front_grid_steps_clist
+\clist_new:N \l__zhvt_back_grid_steps_clist
 % 全部界栏
 \int_step_inline:nnn { 1 } { \l__zhvt_page_lines_int } {
   \clist_put_right:Nn \l__zhvt_all_grid_steps_clist { #1 }
@@ -644,8 +645,8 @@
 }
 % 设置筒子叶所有界栏
 \cs_new_protected:Npn \__zhvt_set_grid_steps:nn #1#2 {
-  \__zhvt_set_page_grid_steps:Nn \l__zhvt_right_grid_steps_clist { #1 }
-  \__zhvt_set_page_grid_steps:Nn \l__zhvt_left_grid_steps_clist { #2 }
+  \__zhvt_set_page_grid_steps:Nn \l__zhvt_front_grid_steps_clist { #1 }
+  \__zhvt_set_page_grid_steps:Nn \l__zhvt_back_grid_steps_clist { #2 }
 }
 % 绘制界栏
 \cs_new_protected:Nn \__zhvt_draw_grid_lines: {
@@ -656,10 +657,10 @@
       \l__zhvt_grid_right_offset_dim + \l__zhvt_page_text_width_dim
         + \l__zhvt_baseline_skip_dim
     )
-    { \__zhvt_draw_page_grid_lines:N \l__zhvt_right_grid_steps_clist }
+    { \__zhvt_draw_page_grid_lines:N \l__zhvt_front_grid_steps_clist }
   % 左侧界栏
   \put ( \l__zhvt_grid_top_offset_dim , \l__zhvt_grid_right_offset_dim )
-    { \__zhvt_draw_page_grid_lines:N \l__zhvt_left_grid_steps_clist }
+    { \__zhvt_draw_page_grid_lines:N \l__zhvt_back_grid_steps_clist }
 }
 
 
@@ -876,5 +877,6 @@
   \__zhvt_set_grid_steps:nn { #1 } { #2 }
 }
 
-\ExplSyntaxOff
+\NewDocumentCommand{ \zhvt } { } { \__zhvt_vphantom: }
 
+\ExplSyntaxOff
