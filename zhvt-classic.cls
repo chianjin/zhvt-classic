@@ -877,6 +877,6 @@
   \__zhvt_set_grid_steps:nn { #1 } { #2 }
 }
 
-\NewDocumentCommand{ \zhvt } { } { \__zhvt_vphantom: }
+\NewDocumentCommand{ \zhvph } { } { \__zhvt_vphantom: }
 
 \ExplSyntaxOff
