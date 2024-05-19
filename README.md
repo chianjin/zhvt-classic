@@ -6,8 +6,6 @@
 
 本模板依赖`jiazhu.sty`宏包。该宏包尚未收录进$\TeX Live$，需要手动下载安装。
 
-
-
 安装方法：[GitHub: CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
 
 ## 默认字体
@@ -222,10 +220,10 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 
 [GitHub: CTeX-org/ctex-kit/issues/631](https://github.com/CTeX-org/ctex-kit/issues/631)
 
-作为替代方案，在夹注跨面断行处截断成两个夹注，之间插入零宽度影子字符。本模板使用`Full Block █ (U+2588)`作为影子字符，定义`\zhvt`命令共使用。
+作为替代方案，在夹注跨面断行处截断成两个夹注，之间插入零宽度影子字符。本模板使用`Full Block █ (U+2588)`作为影子字符，定义`\zhvph`命令共使用。
 
 ```tex
-【長上聲弟】\zhvt【去聲倍與背同潔胡結反老老所……】
+【長上聲弟】\zhvph【去聲倍與背同潔胡結反老老所……】
 ```
 
 ### 全高字体夹注
