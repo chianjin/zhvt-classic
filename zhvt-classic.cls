@@ -49,11 +49,12 @@
   jiazhu~font         .initial:n = GenRyuMin~TW~M,
   % 夹注半高，若设置此选项，将忽略 jiazhu font stretch 参数
   jiazhu~half~size   .bool_set:N = \l__zhvt_jiazhu_half_size_bool,
-  jiazhu~half~size    .initial:n = true,
+  jiazhu~half~size    .initial:n = false,
   jiazhu~half~size    .default:n = true,
   % 夹注字体宽度缩放
-  jiazhu~font~stretch  .fp_set:N = \l__zhvt_jiazhu_font_stretch_fp,
-  jiazhu~font~stretch .initial:n = 0.625,
+  % jiazhu~font~stretch  .fp_set:N = \l__zhvt_jiazhu_font_stretch_fp,
+  % 似乎只能设置为 0.5 方可实现对齐。
+  % jiazhu~font~stretch .initial:n = 0.5,
   % 书宽，六寸
   book~width          .dim_set:N = \l__zhvt_book_width_dim,
   book~width          .initial:n = 192mm,
@@ -101,6 +102,9 @@
   shukou~page~number~chars .int_set:N = \l__zhvt_shukou_page_number_chars_int,
   shukou~page~number~chars .initial:n = 4,
 }
+
+\fp_new:N \l__zhvt_jiazhu_font_stretch_fp
+\fp_set:Nn \l__zhvt_jiazhu_font_stretch_fp { 0.5 }
 
 % 其他参数，需由选项参数计算
 %---------------------------------
