@@ -256,7 +256,10 @@
       %---------------------------------
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
       % 夹注行距比例 linespread，与正文行距比例相同
-      \fp_set_eq:NN \l_tmpa_fp \l__zhvt_baseline_skip_ratio_fp
+      \fp_set:Nn \l_tmpa_fp {
+        ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
+          / \l__zhvt_font_size_dim
+      }
       % 夹注字号比例 ratio，正文字号一半
       \fp_set:Nn \l_tmpb_fp { 0.5 }
     }
@@ -266,7 +269,9 @@
         [ FakeStretch = \fp_eval:n { 1 / \l__zhvt_jiazhu_font_stretch_fp } ]
       % 夹注行距比例 linespread
       \fp_set:Nn \l_tmpa_fp {
-        0.5 * \l__zhvt_baseline_skip_ratio_fp / \l__zhvt_jiazhu_font_stretch_fp
+        ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
+          / 2 / \l__zhvt_font_size_dim / \l__zhvt_jiazhu_font_stretch_fp
+%        0.5 * \l__zhvt_baseline_skip_ratio_fp / \l__zhvt_jiazhu_font_stretch_fp * 0.95
       }
       % 字号比例，为宽度缩放比例参数
       \fp_set_eq:NN \l_tmpb_fp \l__zhvt_jiazhu_font_stretch_fp
@@ -638,14 +643,25 @@
 % 设置单页界栏
 % #1： all - 全部界栏，none - 无界栏，其他定制界栏 ：
 \cs_new_protected:Npn \__zhvt_set_page_grid_steps:Nn #1#2 {
-  \bool_case:n {
-    { \str_compare_p:nNn { #2 } = { all } }
-      { \clist_set_eq:NN #1 \l__zhvt_all_grid_steps_clist }
-    { \str_compare_p:nNn { #2 } = { none } }
-      { \clist_clear:N #1 }
-    { ! \clist_if_empty_p:n { #2 } }
-      { \clist_set:Nn #1 { #2 } }
-  }
+  \str_compare:nNnTF { #2 } = { all }
+    { \clist_set_eq:NN #1 \l__zhvt_all_grid_steps_clist }
+    {
+      \str_compare:nNnTF { #2 } = { none }
+        { \clist_clear:N #1 }
+        {
+          \clist_if_empty:nF { #2 }
+            { \clist_set:Nn #1 { #2 } }
+        }
+    }
+%  TeXLive 2024
+%  \bool_case:n {
+%    { \str_compare_p:nNn { #2 } = { all } }
+%      { \clist_set_eq:NN #1 \l__zhvt_all_grid_steps_clist }
+%    { \str_compare_p:nNn { #2 } = { none } }
+%      { \clist_clear:N #1 }
+%    { ! \clist_if_empty_p:n { #2 } }
+%      { \clist_set:Nn #1 { #2 } }
+%  }
 }
 % 设置筒子叶所有界栏
 \cs_new_protected:Npn \__zhvt_set_grid_steps:nn #1#2 {
