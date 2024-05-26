@@ -4,7 +4,7 @@
 
 ## 依赖宏包
 
-本模板依赖`jiazhu.sty`宏包。该宏包尚未收录进$\TeX Live$，需要手动下载安装。
+本模板依赖`jiazhu.sty`宏包。该宏包尚未收录进$\TeX\mathrm{Live}$，需要手动下载安装。
 
 安装方法：[GitHub: CTeX-org/ctex-kit/issues/630](https://github.com/CTeX-org/ctex-kit/issues/630)
 
@@ -26,7 +26,7 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 % 作者，可选
 \author{宋新安朱文公章句並注}
 % 制作者，可选
-\maker{壬寅夏潤州江南布衣重製}
+\maker{甲辰夏潤州江南布衣重製}
 
 \begin{document}
 
@@ -261,4 +261,5 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 3. 本模板所引用宏包版权归开发者所有，如需授权请自行联系。
 
 Mail: chianjin@foxmail.com
+
 VX: w1280543
