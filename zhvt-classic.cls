@@ -70,8 +70,8 @@
   % 天头地脚比例
   top~bottom~ratio     .fp_set:N = \l__zhvt_top_bottom_ratio_fp,
   top~bottom~ratio    .initial:n = 2,
-  % 水平位置微调比例，字深 120， 字高 880
-  % ( 880 - 1000 / 2 ) 1000 = 0.38
+  % 水平位置微调比例，横排字深 120， 直排字深 500
+  % ( 500 - 120 ) / 1000 = 0.38
   adjust~ratio         .fp_set:N = \l__zhvt_adjust_ratio_fp,
   adjust~ratio        .initial:n = 0.38,
   % 界栏线宽度，一厘
