@@ -103,9 +103,6 @@
   shukou~page~number~chars .initial:n = 4,
 }
 
-\fp_new:N \l__zhvt_jiazhu_font_stretch_fp
-\fp_set:Nn \l__zhvt_jiazhu_font_stretch_fp { 0.5 }
-
 % 其他参数，需由选项参数计算
 %---------------------------------
 % 水平微调距离
@@ -224,7 +221,7 @@
   \defaultCJKfontfeatures { RawFeature= { vertical:+vert:+vhal } }
   % 正文字体
   \setCJKmainfont { \l__zhvt_main_font_str }
-  \xeCJKDeclareSubCJKBlock { MARK } { "2588 }
+  \xeCJKDeclareSubCJKBlock { MARK } { "2588 , "20DE }
 }
 \cs_new_protected:Nn \__zhvt_vphantom: { \vphantom { \symbol { "2588 } } }
 
@@ -255,31 +252,21 @@
         }
       %---------------------------------
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
-      % 夹注行距比例 linespread，与正文行距比例相同
-      \fp_set:Nn \l_tmpa_fp {
-        ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
-          / \l__zhvt_font_size_dim
-      }
-      % 夹注字号比例 ratio，正文字号一半
-      \fp_set:Nn \l_tmpb_fp { 0.5 }
     }
     { % 全高夹注，相当于缩小字号，垂直拉伸至正文字体等高。
       % 字体设置时的缩放比例是宽度缩放比例参数的倒数
-      \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
-        [ FakeStretch = \fp_eval:n { 1 / \l__zhvt_jiazhu_font_stretch_fp } ]
-      % 夹注行距比例 linespread
-      \fp_set:Nn \l_tmpa_fp {
-        ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
-          / 2 / \l__zhvt_font_size_dim / \l__zhvt_jiazhu_font_stretch_fp
-%        0.5 * \l__zhvt_baseline_skip_ratio_fp / \l__zhvt_jiazhu_font_stretch_fp * 0.95
-      }
-      % 字号比例，为宽度缩放比例参数
-      \fp_set_eq:NN \l_tmpb_fp \l__zhvt_jiazhu_font_stretch_fp
+      \newCJKfontfamily { \jiazhufont }
+        { \l__zhvt_jiazhu_font_str } [ FakeStretch = 2 ]
     }
+  % 夹注行距比例 linespread，与正文行距比例相同
+  \fp_set:Nn \l_tmpa_fp {
+    ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
+      / \l__zhvt_font_size_dim
+  }
   % 夹注参数
   \jiazhuset {
     format = \linespread { \fp_use:N \l_tmpa_fp } \jiazhufont,
-    ratio = \l_tmpb_fp,
+    ratio = 0.5,
     beforeskip = 0pt plus 0.0001em, % \c_zero_dim,
     afterskip = 0pt plus 0.0001em, % 避免夹注后正文单字无法换行
     % 夹注快捷符号
@@ -843,7 +830,7 @@
     \draw_begin:
     \draw_path_moveto:n { 0 , 0 }
     \draw_linewidth:n { 0.03em}
-    \draw_path_circle:nn { 0em , 0.5em } { 0.12em }
+    \draw_path_circle:nn { 0em , 0.6em } { 0.08em }
     \draw_path_use_clear:n { stroke }
     \draw_end:
   }
@@ -855,10 +842,10 @@
   \hbox_overlap_left:n {
     \draw_begin:
       \draw_path_moveto:n { 0 , 0 }
-      \draw_transform_shift:n { 0 , 0.4em }
-      \draw_transform_rotate:n { 90 }
+      \draw_transform_shift:n { 0 , 0.57em }
+      \draw_transform_rotate:n { 110 }
       \draw_transform_scale:n {
-        0.25 * \dim_ratio:nn { \l__zhvt_font_size_dim } { 10pt }
+        0.16 * \dim_ratio:nn { \l__zhvt_font_size_dim } { 10pt }
       }
       \draw_path_moveto:n { 8.16 , 0}
       \draw_path_curveto:nnn
