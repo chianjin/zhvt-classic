@@ -7,6 +7,7 @@
 % 内外框间距六厘：1.92mm（净间距）
 % 天头地脚比例二比一
 
+
 \XeTeXuseglyphmetrics=0\relax
 \RequirePackage{fix-cm}
 
@@ -763,19 +764,19 @@
     \clearpage
     \refstepcounter { chapter }
     \IfBooleanTF { #1 }
-        { \str_set:Nn \l_tmpa_str { #3 } }
-        { \str_set:Nn \l_tmpa_str { #3 第 \zhnum{chapter} } }
+        { \tl_set:Nn \l_tmpa_tl { #3 } }
+        { \tl_set:Nn \l_tmpa_tl { #3 第 \zhnum{chapter} } }
     \IfNoValueTF { #2 }
       { \str_set_eq:NN \l__zhvt_chapter_title_str \l_tmpa_str }
       { \str_set:Nn \l__zhvt_chapter_title_str { #2 } }
     \tl_set:Nn \l_tmpb_tl {%
         \par \hspace { \int_use:N \l__zhvt_chapter_indent_int em}
-        \l_tmpa_str
+        \l_tmpa_tl
     }%
     \addtocontents { toc } { \l_tmpb_tl }%
     \skip_horizontal:n
       { \l__zhvt_font_size_dim * \l__zhvt_chapter_indent_int }
-    \l_tmpa_str
+    \l_tmpa_tl
     \IfNoValueF { #4 } { \jiazhu { #4 } }
     \par
 }
