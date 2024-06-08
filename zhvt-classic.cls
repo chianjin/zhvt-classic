@@ -212,7 +212,7 @@
   % 书口页码位置：上部留 1 个字高空白
   \dim_set:Nn \l__zhvt_shukou_page_number_start_dim {
     \l__zhvt_shukou_chapter_title_start_dim
-      + \l__zhvt_shukou_chapter_title_height_dim + \l__zhvt_font_size_dim
+      + \l__zhvt_shukou_chapter_title_height_dim
   }
 }
 
@@ -347,11 +347,11 @@
 }
 % 设置书口内容
 % 书口章标题
-\str_new:N \l__zhvt_chapter_title_str
+\tl_new:N \l__zhvt_chapter_title_tl
 \cs_new_protected:Nn \__zhvt_set_shukou_content: {
   \setstaticcontents * { title }{ \l__zhvt_title_str }
-  \setdynamiccontents * { chapter }{ \str_use:N \l__zhvt_chapter_title_str }
-  \setdynamiccontents * { page~number }{ \zhnum { page } }
+  \setdynamiccontents * { chapter }{ \quad\l__zhvt_chapter_title_tl }
+  \setdynamiccontents * { page~number }{ \quad \zhnum { page } }
 }
 
 % 标题叶
@@ -692,8 +692,8 @@
   \pagestyle { empty }
 }
 % 设置字体、标题盒子
-\bool_new:N \l__zhvt_make_title_bool
-\bool_set_false:N \l__zhvt_make_title_bool
+%\bool_new:N \l__zhvt_make_title_bool
+%\bool_set_false:N \l__zhvt_make_title_bool
 \hook_gput_code:nnn { begindocument } { zhvt } {
   \fontsize { \l__zhvt_font_size_dim } { \l__zhvt_baseline_skip_dim }
   \selectfont
@@ -741,7 +741,7 @@
 \DeclareDocumentCommand{ \maketitle }
   { O { 2, \int_eval:n { \l__zhvt_page_lines_int - 2} } O { none } }
   {
-    \bool_set_true:N \l__zhvt_make_title_bool
+    %\bool_set_true:N \l__zhvt_make_title_bool
     \grid { #1 } { #2 }
     \__zhvt_make_title_page:
     \clearpage
@@ -760,15 +760,23 @@
   }
 
 % 重定义章、节
+% 参数： 是否不编号；书口标题；标题；夹注
 \RenewDocumentCommand \chapter { s o m o } {%
     \clearpage
     \refstepcounter { chapter }
-    \IfBooleanTF { #1 }
-        { \tl_set:Nn \l_tmpa_tl { #3 } }
-        { \tl_set:Nn \l_tmpa_tl { #3 第 \zhnum{chapter} } }
-    \IfNoValueTF { #2 }
-      { \str_set_eq:NN \l__zhvt_chapter_title_str \l_tmpa_str }
-      { \str_set:Nn \l__zhvt_chapter_title_str { #2 } }
+    \tl_set:Nn \l_tmpa_tl { #3 }
+    \IfValueTF { #2 }
+      { \tl_set:Nn \l__zhvt_chapter_title_tl { #2 } }
+      { \tl_set_eq:NN \l__zhvt_chapter_title_tl \l_tmpa_tl }
+    \IfBooleanF { #1 }
+      {
+        \tl_put_right:Nn \l_tmpa_tl { 第\zhnum { chapter } }
+        \tl_if_blank:nTF { #2 } { }
+          {
+            \tl_put_right:Nn \l__zhvt_chapter_title_tl
+              { 第\zhnum { chapter } }
+          }
+      }
     \tl_set:Nn \l_tmpb_tl {%
         \par \hspace { \int_use:N \l__zhvt_chapter_indent_int em}
         \l_tmpa_tl
