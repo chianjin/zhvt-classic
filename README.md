@@ -78,13 +78,13 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 ```tex
 \zhvtset{
   % 正文字体，源流明体半粗
-  main font           = GenRyuMin TW SB,
+  main font           = GenRyuMin2 TW SB,
   % 正文字体高度，三分
   font size           = 9.6mm,
   % 行距，即基线间距，四分五厘
   baseline skip       = 14.4mm,
   % 夹注字体，源流明体
-  jiazhu font         = GenRyuMin TW M,
+  jiazhu font         = GenRyuMin2 TW M,
   % 半高夹注
   jiazhu half size    = false,
   % 书宽，六寸
