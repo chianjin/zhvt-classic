@@ -238,7 +238,7 @@
   % 正文字体
   \setCJKmainfont { \l__zhvt_main_font_str }
   % 正文字体回退
-  \setCJKfallbackfamilyfont{\CJKrmdefault}{ {\l__zhvt_main_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG}, {GenRyuMin2~TW~SB}}
+  \setCJKfallbackfamilyfont{\CJKrmdefault}{ {\l__zhvt_main_font_fallback_str},{GenRyuMin2~TW~SB}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG} }
   % \setCJKfallbackfamilyfont{\CJKsfdefault}{ {\l__zhvt_main_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG}, {GenRyuMin2~TW~SB},{GenRyuMin2~TW~M}, {Noto Sans CJK SC}}
   % 正文字号
   \xeCJKDeclareSubCJKBlock { MARK } { "2588 }
@@ -278,7 +278,7 @@
       % 夹注字体
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
       % 夹注字体回退
-      \setCJKfallBackfamilyfont{ \jiazhufont}{ {\l__zhvt_jiazhu_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG},{GenRyuMin2~TW~M}}
+      \setCJKfallBackfamilyfont{ \jiazhufont}{ {\l__zhvt_jiazhu_font_fallback_str},{GenRyuMin2~TW~M}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG}}
       % 夹注行距比例 linespread，与正文行距比例相同
       \fp_set:Nn \l_tmpa_fp {
         ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
