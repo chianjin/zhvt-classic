@@ -78,13 +78,13 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 ```tex
 \zhvtset{
   % 正文字体，源流明体半粗
-  main font           = GenRyuMin TW SB,
+  main font           = GenRyuMin2 TW SB,
   % 正文字体高度，三分
   font size           = 9.6mm,
   % 行距，即基线间距，四分五厘
   baseline skip       = 14.4mm,
   % 夹注字体，源流明体
-  jiazhu font         = GenRyuMin TW M,
+  jiazhu font         = GenRyuMin2 TW M,
   % 半高夹注
   jiazhu half size    = false,
   % 书宽，六寸
@@ -122,6 +122,29 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
   % 书口页码字数
   shukou page number chars = 4,
 }
+```
+
+### 字体回退（实现备用字体）
+
+```cls
+  % 正文字体
+  mainfont           .str_set:N = \l__zhvt_main_font_str,
+  mainfont           .initial:n = ziyuesongkeben-gbk,
+  % 正文字体回退
+  mainfontfallback  .str_set:N = \l__zhvt_main_font_fallback_str,
+  mainfontfallback  .initial:n = 字悦宋刻本繁体(非商用)Regular,  %回退修改
+  %mainfontfallback  .initial:n = GenRyuMin2TWSB,
+```
+
+>  多次回退 [zhvt-classic.cls](zhvt-classic.cls)  `\setCJKfallbackfamilyfont`
+
+```cls
+  % 夹注字体
+  jiazhufont         .str_set:N = \l__zhvt_jiazhu_font_str,
+  jiazhufont         .initial:n = 字悦宋刻本繁体(非商用)Regular,
+  % 夹注字体回退
+  jiazhufontfallback .str_set:N = \l__zhvt_jiazhu_font_fallback_str,
+  jiazhufontfallback .initial:n = GenRyuMin2TWM,
 ```
 
 ### 微调比例
