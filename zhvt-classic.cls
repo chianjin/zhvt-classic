@@ -38,7 +38,11 @@
 \keys_define:nn { zhvt } {
   % 正文字体
   main~font           .str_set:N = \l__zhvt_main_font_str,
-  main~font           .initial:n = GenRyuMin~TW~SB,
+  main~font           .initial:n = ziyuesongkeben-gbk,
+  % 正文字体回退
+  main~font~fallback  .str_set:N = \l__zhvt_main_font_fallback_str,
+  main~font~fallback  .initial:n = 字悦宋刻本繁体(非商用)~Regular,  
+  % main~font~fallback  .initial:n = GenRyuMin2~TW~SB,
   % 正文字号，三分
   font~size           .dim_set:N = \l__zhvt_font_size_dim,
   font~size           .initial:n = 9.6mm,
@@ -47,7 +51,10 @@
   baseline~skip       .initial:n = 14.4mm,
   % 夹注字体
   jiazhu~font         .str_set:N = \l__zhvt_jiazhu_font_str,
-  jiazhu~font         .initial:n = GenRyuMin~TW~M,
+  jiazhu~font         .initial:n = 字悦宋刻本繁体(非商用)~Regular,
+  % 夹注字体回退
+  jiazhu~font~fallback .str_set:N = \l__zhvt_jiazhu_font_fallback_str,
+  jiazhu~font~fallback .initial:n = GenRyuMin2~TW~M,
   % 夹注半高，若设置此选项，将忽略 jiazhu font stretch 参数
   jiazhu~half~size   .bool_set:N = \l__zhvt_jiazhu_half_size_bool,
   jiazhu~half~size    .initial:n = false,
@@ -223,8 +230,17 @@
 \cs_new_protected:Nn \__zhvt_set_main_font: {
   % 字体直排旋转
   \defaultCJKfontfeatures { RawFeature= { vertical:+vert:+vhal } }
+  % 字体设置
+  %% 自动回退配置
+  \xeCJKsetup{AutoFallBack=true}
+  % 声明扩展 B 及以上字符范围
+  \xeCJKDeclareCharClass{CJK}{"20000 -> "2FFFF} % 扩展 B 和扩展 C 范围
   % 正文字体
   \setCJKmainfont { \l__zhvt_main_font_str }
+  % 正文字体回退
+  \setCJKfallbackfamilyfont{\CJKrmdefault}{ {\l__zhvt_main_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG}, {GenRyuMin2~TW~SB}}
+  % \setCJKfallbackfamilyfont{\CJKsfdefault}{ {\l__zhvt_main_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG}, {GenRyuMin2~TW~SB},{GenRyuMin2~TW~M}, {Noto Sans CJK SC}}
+  % 正文字号
   \xeCJKDeclareSubCJKBlock { MARK } { "2588 }
 }
 \cs_new_protected:Nn \__zhvt_vphantom: { \vphantom { \symbol { "2588 } } }
@@ -255,7 +271,14 @@
           \tex_ignorespaces:D
         }
       %---------------------------------
+      %% 自动回退配置
+      \xeCJKsetup{AutoFallBack=true}
+      % 声明扩展 B 及以上字符范围
+      \xeCJKDeclareCharClass{CJK}{"20000 -> "2FFFF} % 扩展 B 和扩展 C 范围
+      % 夹注字体
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
+      % 夹注字体回退
+      \setCJKfallBackfamilyfont{ \jiazhufont}{ {\l__zhvt_jiazhu_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG},{GenRyuMin2~TW~M}}
       % 夹注行距比例 linespread，与正文行距比例相同
       \fp_set:Nn \l_tmpa_fp {
         ( \l__zhvt_baseline_skip_dim - \l__zhvt_grid_line_width_dim )
@@ -266,7 +289,11 @@
     }
     { % 全高夹注，相当于缩小字号，垂直拉伸至正文字体等高。
       % 字体设置时的缩放比例是宽度缩放比例参数的倒数
+      % \xeCJKsetup{AutoFallBack=true}
+      % 声明扩展 B 及以上字符范围
+      % \xeCJKDeclareCharClass{CJK}{"20000 -> "2FFFF} % 扩展 B 和扩展 C 范围
       \newCJKfontfamily { \jiazhufont } { \l__zhvt_jiazhu_font_str }
+      % \setCJKfallBackfamilyfont{ \jiazhufont}{ {\l__zhvt_jiazhu_font_fallback_str}, {SimSun}, {SimSun-ExtB}, {SimSun-ExtG} ,{GenRyuMin2~TW~M}}
         [ FakeStretch = \fp_eval:n { 1 / \l__zhvt_jiazhu_font_stretch_fp } ]
       % 夹注行距比例 linespread
       \fp_set:Nn \l_tmpa_fp {

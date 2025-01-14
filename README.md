@@ -124,6 +124,29 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 }
 ```
 
+### 字体回退（实现备用字体）
+
+```cls
+  % 正文字体
+  mainfont           .str_set:N = \l__zhvt_main_font_str,
+  mainfont           .initial:n = ziyuesongkeben-gbk,
+  % 正文字体回退
+  mainfontfallback  .str_set:N = \l__zhvt_main_font_fallback_str,
+  mainfontfallback  .initial:n = 字悦宋刻本繁体(非商用)Regular,  %回退修改
+  %mainfontfallback  .initial:n = GenRyuMin2TWSB,
+```
+
+>  多次回退 [zhvt-classic.cls](zhvt-classic.cls)  `\setCJKfallbackfamilyfont`
+
+```cls
+  % 夹注字体
+  jiazhufont         .str_set:N = \l__zhvt_jiazhu_font_str,
+  jiazhufont         .initial:n = 字悦宋刻本繁体(非商用)Regular,
+  % 夹注字体回退
+  jiazhufontfallback .str_set:N = \l__zhvt_jiazhu_font_fallback_str,
+  jiazhufontfallback .initial:n = GenRyuMin2TWM,
+```
+
 ### 微调比例
 
 汉字横排时，基线位于汉字下部；直排时，基线水平居中。因此在视觉上，直排时文字的位置偏左。设置`adjust ratio`参数用于调整文字水平视觉位置，确保框线界栏位置精确。此参数计算方法：( 直排字深 - 横排字深 ）/ 总高。使用其他字体时需要根据字体计算确定。
