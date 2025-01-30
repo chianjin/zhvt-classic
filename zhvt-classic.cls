@@ -38,7 +38,7 @@
 \keys_define:nn { zhvt } {
   % 正文字体
   main~font           .str_set:N = \l__zhvt_main_font_str,
-  main~font           .initial:n = GenRyuMin~TW~SB,
+  main~font           .initial:n = GenRyuMin2~TW~SB,
   % 正文字号，三分
   font~size           .dim_set:N = \l__zhvt_font_size_dim,
   font~size           .initial:n = 9.6mm,
@@ -47,11 +47,11 @@
   baseline~skip       .initial:n = 14.4mm,
   % 夹注字体
   jiazhu~font         .str_set:N = \l__zhvt_jiazhu_font_str,
-  jiazhu~font         .initial:n = GenRyuMin~TW~M,
+  jiazhu~font         .initial:n = GenRyuMin2~TW~M,
   % 夹注半高，若设置此选项，将忽略 jiazhu font stretch 参数
   jiazhu~half~size   .bool_set:N = \l__zhvt_jiazhu_half_size_bool,
   jiazhu~half~size    .initial:n = false,
-  jiazhu~half~size    .default:n = true,
+  jiazhu~half~size    .default:n = false,
   % 夹注字体宽度缩放
   % jiazhu~font~stretch  .fp_set:N = \l__zhvt_jiazhu_font_stretch_fp,
   % 似乎只能设置为 0.5 方可实现对齐。
