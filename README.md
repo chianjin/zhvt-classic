@@ -10,9 +10,9 @@
 
 ## 默认字体
 
-本模板默认使用基于思源宋体修改的源流明体。请自行下载安装。
+本模板默认使用基于思源宋体修改的源流明体，字体首页：[GitHub: ButTaiwan/genryu-font](https://github.com/ButTaiwan/genryu-font)
 
-下载地址：[GitHub: ButTaiwan/genryu-font](https://github.com/ButTaiwan/genryu-font)
+请下载 v2.100 TW 版字体：[GenRyuMin2TW-otf.zip](https://github.com/ButTaiwan/genryu-font/releases/download/v2.100/GenRyuMin2TW-otf.zip)
 
 Windows 用户解压后右键点击选择“为所有用户安装”，否则可能报找不到字体的错误。
 
@@ -78,13 +78,13 @@ Windows 用户解压后右键点击选择“为所有用户安装”，否则可
 ```tex
 \zhvtset{
   % 正文字体，源流明体半粗
-  main font           = GenRyuMin TW SB,
+  main font           = GenRyuMin2 TW SB,
   % 正文字体高度，三分
   font size           = 9.6mm,
   % 行距，即基线间距，四分五厘
   baseline skip       = 14.4mm,
   % 夹注字体，源流明体
-  jiazhu font         = GenRyuMin TW M,
+  jiazhu font         = GenRyuMin2 TW M,
   % 半高夹注
   jiazhu half size    = false,
   % 书宽，六寸
