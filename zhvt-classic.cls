@@ -7,7 +7,7 @@
 % 内外框间距六厘：1.92mm（净间距）
 % 天头地脚比例二比一
 
-
+\RequirePackage[2025/03/08]{latexrelease}
 \XeTeXuseglyphmetrics=0\relax
 \RequirePackage{fix-cm}
 
@@ -485,7 +485,7 @@
       \draw_begin:
         \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
         \exp_args:Ne \color_fill:n { \l__zhvt_grid_color_str }
-        \draw_linewidth:n { \l__zhvt_grid_line_width_dim }
+        \draw_set_linewidth:n { \l__zhvt_grid_line_width_dim }
         % 内框
         \draw_path_rectangle:nn
           { 0 , 0 }
@@ -513,7 +513,7 @@
       \draw_begin:
         \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
         \exp_args:Ne \color_fill:n { \l__zhvt_grid_color_str }
-        \draw_linewidth:n { \l__zhvt_grid_line_width_dim }
+        \draw_set_linewidth:n { \l__zhvt_grid_line_width_dim }
         % 鱼尾上分割线
         \draw_path_moveto:n
           { 0 , 0 }
@@ -556,7 +556,7 @@
     {
       \draw_begin:
         \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
-        \draw_linewidth:n { \l__zhvt_grid_line_width_dim }
+        \draw_set_linewidth:n { \l__zhvt_grid_line_width_dim }
         \draw_path_moveto:n
           { 0 , 0 }
         \draw_path_lineto:n
@@ -601,7 +601,7 @@
     {
       \draw_begin:
         \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
-        \draw_linewidth:n { \l__zhvt_frame_line_width_dim }
+        \draw_set_linewidth:n { \l__zhvt_frame_line_width_dim }
         \draw_path_rectangle:nn
           { 0 , 0 }
           { \l__zhvt_frame_height_dim , \l__zhvt_frame_width_dim }
@@ -614,7 +614,7 @@
   \clist_if_empty:NF #1 {
     \draw_begin:
       \exp_args:Ne \color_stroke:n { \l__zhvt_grid_color_str }
-      \draw_linewidth:n { \l__zhvt_grid_line_width_dim }
+      \draw_set_linewidth:n { \l__zhvt_grid_line_width_dim }
       \clist_map_inline:Nn #1
         {
           \dim_set:Nn \l_tmpa_dim {
@@ -851,7 +851,7 @@
   \hbox_overlap_left:n {
     \draw_begin:
     \draw_path_moveto:n { 0 , 0 }
-    \draw_linewidth:n { 0.03em}
+    \draw_set_linewidth:n { 0.03em}
     \draw_path_circle:nn { 0em , 0.5em } { 0.12em }
     \draw_path_use_clear:n { stroke }
     \draw_end:
